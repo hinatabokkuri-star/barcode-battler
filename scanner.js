@@ -1,5 +1,5 @@
 // ===== BARCODE BATTLER RPG - scanner.js =====
-// バージョン: v0.2.4.3
+// バージョン: v0.2.4.4
 // 担当: カメラ起動・ZBar WASMによるバーコード読み取り
 // ZBar WASMをCDNからdynamic importで読み込む方式
 // game.js の processScan() / showToast() / playTone() を使用
@@ -10,6 +10,7 @@ let scanCanvas = null;
 let scanCtx = null;
 let cameraActive = false;
 let zbarScanImageData = null;
+let scanLoopCount = 0;
 
 async function initZBar(){
   if(zbarScanImageData) return true;
@@ -51,6 +52,7 @@ async function toggleCamera(){
     document.getElementById('scan-overlay').style.display = 'flex';
     document.getElementById('camera-btn').textContent = '⏹ カメラ停止';
     cameraActive = true;
+    scanLoopCount = 0;
 
     scanCanvas = document.createElement('canvas');
     scanCtx = scanCanvas.getContext('2d');
@@ -58,7 +60,7 @@ async function toggleCamera(){
     await new Promise(r => { vid.onloadedmetadata = r; });
     await vid.play();
 
-    document.getElementById('scan-counter').textContent = '📷 バーコードに近づけてください';
+    document.getElementById('scan-counter').textContent = '📷 スキャン開始...';
     scanLoop();
 
   }catch(e){
@@ -71,8 +73,21 @@ async function toggleCamera(){
 async function scanLoop(){
   if(!cameraActive) return;
   const vid = document.getElementById('camera-video');
+  scanLoopCount++;
+
+  // デバッグ：10回に1回カウンター更新
+  if(scanLoopCount % 10 === 0){
+    document.getElementById('scan-counter').textContent =
+      `🔍 スキャン中... (${scanLoopCount}回 / ${vid.videoWidth}x${vid.videoHeight})`;
+  }
 
   try{
+    if(vid.videoWidth === 0 || vid.videoHeight === 0){
+      // ビデオまだ準備できていない
+      scanTimerId = setTimeout(scanLoop, 150);
+      return;
+    }
+
     scanCanvas.width = vid.videoWidth;
     scanCanvas.height = vid.videoHeight;
     scanCtx.drawImage(vid, 0, 0);
@@ -90,7 +105,9 @@ async function scanLoop(){
       return;
     }
   }catch(e){
-    // フレームエラーは無視
+    // エラー内容をカウンターに表示（デバッグ用）
+    document.getElementById('scan-counter').textContent = `⚠️ ${e.message||e}`;
+    console.error('scanLoop error:', e);
   }
 
   scanTimerId = setTimeout(scanLoop, 150);
@@ -109,4 +126,5 @@ function stopCamera(){
   document.getElementById('camera-btn').textContent = '📷 カメラ起動';
   document.getElementById('scan-counter').textContent = '';
   cameraActive = false;
+  scanLoopCount = 0;
 }
