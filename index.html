@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>バーコードバトラーRPG</title>
-<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Zen+Dots&family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap');
 
@@ -571,36 +571,36 @@ function manualScan(){
 }
 
 // ===== CAMERA =====
-// v0.2.2.2 変更点:
-//   [B] TRY_HARDERヒント追加（フェーズ2）
-//       ZXingが画像全体を精査してバーコードを探すモード
-//       パッケージ模様への誤反応を抑制し、本物のバーコード検出精度を向上
-//   [A] 背面カメラ・HD解像度を明示指定（facingMode:'environment', ideal 1280x720）
-//       exact指定失敗時はフォールバックあり（前面カメラのみの端末対応）
-//   [C] 3回連続同一コード一致で確定（誤読防止）
-//       scan-counterでリアルタイムにデバッグ表示
-let zxingReader = null;
-let lastScanned = '';
-let scanCount = 0;  // [C] 連続一致カウンター
+// v0.2.3.1 変更点:
+//   ZXingを廃止しiOS/SafariネイティブのBarcodeDetector APIに全面移行
+//   iPhone SE2(iOS17以降)・13・Airで動作確認済み想定
+//   ループでフレームを取得しBarcodeDetectorにかける方式
+let scanStream = null;
+let scanAnimFrame = null;
+let barcodeDetector = null;
 
 async function toggleCamera(){
   if(cameraActive){stopCamera();return;}
   try{
-    if(!window.ZXing){showToast('ライブラリ読み込み中...');return;}
+    // BarcodeDetector API対応チェック
+    if(!('BarcodeDetector' in window)){
+      showToast('このブラウザはBarcodeDetector非対応です');
+      return;
+    }
 
-    // [A] 背面カメラ・HD解像度を先にgetUserMediaで取得
+    // 背面カメラ・高解像度で取得
     let stream;
     try{
       stream = await navigator.mediaDevices.getUserMedia({
         video:{ facingMode:{exact:'environment'}, width:{ideal:1920}, height:{ideal:1080} }
       });
     }catch(e){
-      // exactが失敗した場合（前面カメラのみ等）フォールバック
       stream = await navigator.mediaDevices.getUserMedia({
-        video:{ facingMode:'environment', width:{ideal:1920}, height:{ideal:1080} }
+        video:{ facingMode:'environment' }
       });
     }
 
+    scanStream = stream;
     const vid = document.getElementById('camera-video');
     vid.srcObject = stream;
     vid.style.display = 'block';
@@ -608,44 +608,18 @@ async function toggleCamera(){
     document.getElementById('scan-overlay').style.display = 'flex';
     document.getElementById('camera-btn').textContent = '⏹ カメラ停止';
     cameraActive = true;
-    lastScanned = '';
-    scanCount = 0;
     document.getElementById('scan-counter').textContent = '';
     showToast('📷 バーコードに近づけてください');
 
-    // [B] TRY_HARDERヒント追加（本物のバーコードを精査するモード）
-    const hints = new Map();
-    hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-    zxingReader = new ZXing.BrowserMultiFormatReader(hints);
+    // EAN-13・EAN-8に絞って検出（誤反応を減らす）
+    barcodeDetector = new BarcodeDetector({ formats: ['ean_13', 'ean_8'] });
 
-    // [A] null指定でsrcObjectのストリームをそのまま使用
-    zxingReader.decodeFromVideoDevice(null, 'camera-video', (result, err) => {
-      if(!cameraActive) return;
-      if(result){
-        const code = result.getText();
+    // videoのメタデータ読み込み待ち
+    await new Promise(r => { vid.onloadedmetadata = r; });
+    await vid.play();
 
-        // [C] 3回連続一致で確定
-        if(code !== lastScanned){
-          lastScanned = code;
-          scanCount = 1;
-        } else {
-          scanCount++;
-        }
-
-        // デバッグ用カウンター表示
-        document.getElementById('scan-counter').textContent =
-          `読み取り中: ${code} (${scanCount}/3)`;
-
-        if(scanCount >= 3){
-          scanCount = 0;
-          lastScanned = '';
-          playTone(880,'sine',0.15,0.4);
-          showToast('✅ ' + code + ' 読み取り成功！');
-          stopCamera();
-          processScan(code);
-        }
-      }
-    });
+    // スキャンループ開始
+    scanLoop();
 
   }catch(e){
     console.error(e);
@@ -654,18 +628,40 @@ async function toggleCamera(){
   }
 }
 
-function stopCamera(){
-  if(zxingReader){try{zxingReader.reset();}catch(e){}zxingReader=null;}
+async function scanLoop(){
+  if(!cameraActive) return;
   const vid = document.getElementById('camera-video');
-  if(vid.srcObject){vid.srcObject.getTracks().forEach(t=>t.stop());vid.srcObject=null;}
+
+  try{
+    const barcodes = await barcodeDetector.detect(vid);
+    if(barcodes.length > 0){
+      const code = barcodes[0].rawValue;
+      document.getElementById('scan-counter').textContent = `読み取り: ${code}`;
+      playTone(880,'sine',0.15,0.4);
+      showToast('✅ ' + code + ' 読み取り成功！');
+      stopCamera();
+      processScan(code);
+      return;
+    }
+  }catch(e){
+    // フレーム取得エラーは無視して継続
+  }
+
+  // 次フレームへ
+  scanAnimFrame = requestAnimationFrame(scanLoop);
+}
+
+function stopCamera(){
+  if(scanAnimFrame){ cancelAnimationFrame(scanAnimFrame); scanAnimFrame=null; }
+  if(scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream=null; }
+  const vid = document.getElementById('camera-video');
+  vid.srcObject = null;
   vid.style.display = 'none';
   document.getElementById('camera-ph').style.display = 'flex';
   document.getElementById('scan-overlay').style.display = 'none';
   document.getElementById('camera-btn').textContent = '📷 カメラ起動';
   document.getElementById('scan-counter').textContent = '';
   cameraActive = false;
-  lastScanned = '';
-  scanCount = 0;
 }
 
 // ===== BATTLE =====
@@ -824,7 +820,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.3</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.3.1</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
