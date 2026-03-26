@@ -767,7 +767,6 @@ async function toggleCamera(){
   try{
     const vid=document.getElementById('camera-video');
 
-    // まずgetUserMediaで直接カメラ起動（Safari対策）
     const stream = await navigator.mediaDevices.getUserMedia({
       video:{ facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720} }
     });
@@ -780,35 +779,41 @@ async function toggleCamera(){
     cameraActive=true;
     showToast('📷 バーコードに近づけてください');
 
-    // ZXingでデコード開始
-    if(window.ZXing){
-      zxingReader = new ZXing.BrowserMultiFormatReader();
-      const hints = new Map();
-      hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-      zxingReader.hints = hints;
+    if(!window.ZXing){ showToast('📷 カメラ起動中（手動入力も可）'); return; }
 
-      // videoトラックからスキャン
-      const scanLoop = setInterval(async()=>{
-        if(!cameraActive){clearInterval(scanLoop);return;}
-        try{
-          const result = await zxingReader.decodeFromVideoElement(vid);
-          if(result){
-            const code = result.getText();
-            const now = Date.now();
-            if(code === lastScanned && now - lastScannedTime < 2000) return;
-            lastScanned = code;
-            lastScannedTime = now;
-            playTone(880,'sine',0.1,0.3);
-            showToast('✅ スキャン成功！');
-            clearInterval(scanLoop);
-            stopCamera();
-            processScan(code);
-          }
-        }catch(e){}
-      }, 300);
-    } else {
-      showToast('📷 カメラ起動中（手動入力も可）');
-    }
+    // canvasに1フレームずつ切り出してデコード（ストリームを止めない）
+    const canvas = document.getElementById('camera-canvas');
+    const ctx = canvas.getContext('2d');
+    zxingReader = new ZXing.BrowserMultiFormatReader();
+
+    const scanLoop = setInterval(async()=>{
+      if(!cameraActive){ clearInterval(scanLoop); return; }
+      if(vid.readyState !== vid.HAVE_ENOUGH_DATA) return;
+      try{
+        canvas.width = vid.videoWidth;
+        canvas.height = vid.videoHeight;
+        ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const luminanceSource = new ZXing.HTMLCanvasElementLuminanceSource(canvas);
+        const binaryBitmap = new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(luminanceSource));
+        const result = zxingReader.decodeBitmap(binaryBitmap);
+        if(result){
+          const code = result.getText();
+          const now = Date.now();
+          if(code === lastScanned && now - lastScannedTime < 2000) return;
+          lastScanned = code;
+          lastScannedTime = now;
+          playTone(880,'sine',0.1,0.3);
+          showToast('✅ スキャン成功！');
+          clearInterval(scanLoop);
+          stopCamera();
+          processScan(code);
+        }
+      }catch(e){
+        // デコード失敗は無視（バーコードが見つからない場合も含む）
+      }
+    }, 300);
+
   }catch(e){
     console.error(e);
     showToast('カメラのアクセスが必要です');
@@ -1051,7 +1056,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.0</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.2</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
