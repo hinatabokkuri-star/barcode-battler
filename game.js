@@ -2,6 +2,8 @@
 // バージョン: v0.2.4.1
 // 担当: モンスター生成・バトル・コレクション・UI・エフェクト
 
+const GAME_VERSION = "v0.2.4.1";
+
 // ===== AUDIO =====
 let audioCtx = null;
 function getAudioCtx(){
