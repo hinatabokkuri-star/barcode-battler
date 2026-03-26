@@ -592,12 +592,12 @@ async function toggleCamera(){
     let stream;
     try{
       stream = await navigator.mediaDevices.getUserMedia({
-        video:{ facingMode:{exact:'environment'}, width:{ideal:1280}, height:{ideal:720} }
+        video:{ facingMode:{exact:'environment'}, width:{ideal:1920}, height:{ideal:1080} }
       });
     }catch(e){
       // exactが失敗した場合（前面カメラのみ等）フォールバック
       stream = await navigator.mediaDevices.getUserMedia({
-        video:{ facingMode:'environment' }
+        video:{ facingMode:'environment', width:{ideal:1920}, height:{ideal:1080} }
       });
     }
 
@@ -824,7 +824,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.2</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.3</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
