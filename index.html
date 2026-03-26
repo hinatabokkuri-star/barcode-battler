@@ -33,41 +33,20 @@ body{
   overflow-x:hidden;
 }
 
-/* ===== PARTICLES ===== */
 #particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.particle{
-  position:absolute;
-  border-radius:50%;
-  pointer-events:none;
-  animation:floatUp linear forwards;
-}
-@keyframes floatUp{
-  0%{opacity:1;transform:translateY(0) scale(1);}
-  100%{opacity:0;transform:translateY(-120px) scale(0);}
-}
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:floatUp linear forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-120px) scale(0);}}
 
-/* ===== FLASH OVERLAY ===== */
-#flash-overlay{
-  position:fixed;inset:0;z-index:200;
-  pointer-events:none;opacity:0;
-  transition:opacity 0.05s;
-}
+#flash-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.05s;}
 
-/* ===== SUMMON OVERLAY ===== */
 #summon-overlay{
-  position:fixed;inset:0;z-index:300;
-  display:none;
-  align-items:center;justify-content:center;
-  flex-direction:column;
+  position:fixed;inset:0;z-index:300;display:none;
+  align-items:center;justify-content:center;flex-direction:column;
   background:rgba(0,0,0,0.92);
 }
 .summon-circle{
-  width:200px;height:200px;
-  border-radius:50%;
-  border:3px solid var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  font-size:5rem;
-  position:relative;
+  width:200px;height:200px;border-radius:50%;border:3px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;
   animation:circleAppear 0.4s ease;
   box-shadow:0 0 60px rgba(0,255,204,0.4),inset 0 0 40px rgba(0,255,204,0.1);
 }
@@ -76,85 +55,41 @@ body{
 .summon-circle.legendary{border-color:var(--c-legendary);box-shadow:0 0 100px rgba(255,170,0,0.8),inset 0 0 60px rgba(255,170,0,0.3);animation:circleAppear 0.4s ease,legendaryPulse 1s ease-in-out infinite 0.4s;}
 @keyframes circleAppear{from{transform:scale(0) rotate(-180deg);opacity:0;}to{transform:scale(1) rotate(0deg);opacity:1;}}
 @keyframes legendaryPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
-
 .summon-rings{position:absolute;inset:-20px;}
-.summon-ring{
-  position:absolute;inset:0;
-  border-radius:50%;
-  border:1px solid currentColor;
-  opacity:0;
-  animation:ringExpand 1.2s ease-out forwards;
-}
+.summon-ring{position:absolute;inset:0;border-radius:50%;border:1px solid currentColor;opacity:0;animation:ringExpand 1.2s ease-out forwards;}
 .summon-ring:nth-child(2){animation-delay:0.15s;}
 .summon-ring:nth-child(3){animation-delay:0.3s;}
-@keyframes ringExpand{
-  0%{transform:scale(0.5);opacity:0.8;}
-  100%{transform:scale(2.5);opacity:0;}
-}
-
-.summon-name{
-  font-family:'Zen Dots',cursive;
-  font-size:1.6rem;
-  margin-top:24px;
-  text-align:center;
-  opacity:0;
-  animation:nameAppear 0.5s ease 0.6s forwards;
-}
+@keyframes ringExpand{0%{transform:scale(0.5);opacity:0.8;}100%{transform:scale(2.5);opacity:0;}}
+.summon-name{font-family:'Zen Dots',cursive;font-size:1.6rem;margin-top:24px;text-align:center;opacity:0;animation:nameAppear 0.5s ease 0.6s forwards;}
 @keyframes nameAppear{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.summon-rarity-text{font-size:0.8rem;letter-spacing:4px;margin-top:8px;opacity:0;animation:nameAppear 0.5s ease 0.8s forwards;}
+.summon-tap{font-size:0.7rem;color:var(--text-dim);margin-top:32px;opacity:0;animation:nameAppear 0.5s ease 1.2s forwards;}
 
-.summon-rarity-text{
-  font-size:0.8rem;
-  letter-spacing:4px;
-  margin-top:8px;
-  opacity:0;
-  animation:nameAppear 0.5s ease 0.8s forwards;
-}
-
-.summon-tap{
-  font-size:0.7rem;
-  color:var(--text-dim);
-  margin-top:32px;
-  opacity:0;
-  animation:nameAppear 0.5s ease 1.2s forwards;
-}
-
-/* ===== HEADER ===== */
-.header{
-  text-align:center;padding:18px 16px 10px;
-  border-bottom:1px solid var(--border);
-  background:rgba(0,0,0,0.4);
-  position:relative;z-index:10;
-}
-.header h1{
-  font-family:'Zen Dots',cursive;
-  font-size:1.3rem;color:var(--accent);
-  text-shadow:0 0 30px rgba(0,255,204,0.6);
-  letter-spacing:3px;
-}
+.header{text-align:center;padding:18px 16px 10px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.4);position:relative;z-index:10;}
+.header h1{font-family:'Zen Dots',cursive;font-size:1.3rem;color:var(--accent);text-shadow:0 0 30px rgba(0,255,204,0.6);letter-spacing:3px;}
 .header p{font-size:0.65rem;color:var(--text-dim);margin-top:3px;letter-spacing:2px;}
 
-/* ===== TABS ===== */
 .tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.3);position:relative;z-index:10;}
 .tab{flex:1;padding:10px 4px;text-align:center;font-size:0.62rem;color:var(--text-dim);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent;letter-spacing:0.5px;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(0,255,204,0.04);}
 .tab-icon{font-size:1rem;display:block;margin-bottom:2px;}
 
-/* ===== PAGES ===== */
 .page{display:none;padding:14px;position:relative;z-index:10;}
 .page.active{display:block;}
 
-/* ===== SCAN PAGE ===== */
 .scan-area{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;}
 .camera-view{width:100%;aspect-ratio:4/3;background:#000;border-radius:12px;overflow:hidden;position:relative;margin-bottom:14px;}
 #camera-video{width:100%;height:100%;object-fit:cover;display:none;}
 .scan-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;}
 .scan-frame{width:70%;height:40%;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 20px rgba(0,255,204,0.3),inset 0 0 20px rgba(0,255,204,0.08);position:relative;}
-.scan-corners::before,.scan-corners::after{content:'';position:absolute;width:16px;height:16px;border-color:var(--accent);border-style:solid;}
 .scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scanLine 1.8s ease-in-out infinite;box-shadow:0 0 8px var(--accent);}
 @keyframes scanLine{0%,100%{top:0;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;}}
 .camera-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-dim);gap:8px;}
 .camera-ph .icon{font-size:3rem;}
 .camera-ph p{font-size:0.72rem;}
+
+/* スキャンカウンター（デバッグ表示） */
+.scan-counter{text-align:center;font-size:0.65rem;color:var(--text-dim);margin-top:8px;height:18px;letter-spacing:1px;}
 
 .btn{display:inline-block;padding:12px 24px;border-radius:50px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;transition:all 0.2s;border:none;letter-spacing:1px;}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#00bbaa);color:#000;box-shadow:0 4px 20px rgba(0,255,204,0.3);}
@@ -168,39 +103,25 @@ body{
 .manual-input{display:flex;gap:8px;margin-top:12px;}
 .manual-input input{flex:1;background:#050514;border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'M PLUS Rounded 1c',sans-serif;font-size:0.82rem;outline:none;}
 .manual-input input:focus{border-color:var(--accent);}
-
 .sep{margin:10px 0;text-align:center;color:var(--text-dim);font-size:0.68rem;}
 
-/* ===== MONSTER CARD ===== */
-.monster-card{
-  background:var(--panel);border:1px solid var(--border);border-radius:16px;
-  padding:16px;margin-bottom:12px;position:relative;overflow:hidden;
-}
+.monster-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;}
 .monster-card.animIn{animation:cardSlideIn 0.5s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes cardSlideIn{from{opacity:0;transform:translateY(30px) scale(0.92);}to{opacity:1;transform:translateY(0) scale(1);}}
-
 .monster-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .monster-card.common::before{background:var(--c-common);}
 .monster-card.rare::before{background:var(--c-rare);box-shadow:0 0 12px var(--c-rare);}
 .monster-card.epic::before{background:var(--c-epic);box-shadow:0 0 16px var(--c-epic);}
 .monster-card.legendary::before{background:var(--c-legendary);box-shadow:0 0 20px var(--c-legendary);animation:legendaryBar 2s ease-in-out infinite;}
 @keyframes legendaryBar{0%,100%{box-shadow:0 0 20px var(--c-legendary);}50%{box-shadow:0 0 40px var(--c-legendary),0 0 80px rgba(255,170,0,0.3);}}
-
 .monster-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
-.monster-avatar{
-  width:76px;height:76px;border-radius:14px;
-  background:linear-gradient(135deg,#111130,#1a1050);
-  display:flex;align-items:center;justify-content:center;
-  font-size:2.8rem;flex-shrink:0;border:1px solid var(--border);
-}
+.monster-avatar{width:76px;height:76px;border-radius:14px;background:linear-gradient(135deg,#111130,#1a1050);display:flex;align-items:center;justify-content:center;font-size:2.8rem;flex-shrink:0;border:1px solid var(--border);}
 .monster-avatar.legendary{border-color:var(--c-legendary);box-shadow:0 0 20px rgba(255,170,0,0.4);}
 .monster-avatar.epic{border-color:var(--c-epic);box-shadow:0 0 15px rgba(204,68,255,0.3);}
 .monster-avatar.rare{border-color:var(--c-rare);box-shadow:0 0 12px rgba(51,153,255,0.25);}
-
 .monster-info{flex:1;min-width:0;}
 .monster-name{font-family:'Zen Dots',cursive;font-size:0.95rem;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .monster-sub{font-size:0.62rem;color:var(--text-dim);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
 .badge-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.58rem;font-weight:700;letter-spacing:0.8px;}
 .badge.common{background:rgba(119,136,153,0.18);color:var(--c-common);border:1px solid var(--c-common);}
@@ -208,9 +129,7 @@ body{
 .badge.epic{background:rgba(204,68,255,0.18);color:var(--c-epic);border:1px solid var(--c-epic);}
 .badge.legendary{background:rgba(255,170,0,0.18);color:var(--c-legendary);border:1px solid var(--c-legendary);}
 .badge.element{border-radius:4px;}
-
 .barcode-digits{font-family:'Zen Dots',cursive;font-size:0.58rem;color:var(--text-dim);letter-spacing:2px;margin-top:2px;}
-
 .params-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;}
 .param-item{background:rgba(0,0,0,0.35);border-radius:8px;padding:6px 8px;}
 .param-top{display:flex;justify-content:space-between;align-items:center;}
@@ -218,13 +137,10 @@ body{
 .param-value{font-family:'Zen Dots',cursive;font-size:0.82rem;color:var(--accent3);}
 .param-bar-bg{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:3px;overflow:hidden;}
 .param-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1);}
-
 .skills-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
 .skill-badge{background:rgba(255,51,102,0.12);border:1px solid rgba(255,51,102,0.35);border-radius:20px;padding:3px 10px;font-size:0.6rem;color:var(--accent2);}
-
 .lv-badge{background:rgba(0,255,204,0.12);border:1px solid rgba(0,255,204,0.3);border-radius:4px;padding:1px 6px;font-size:0.58rem;color:var(--accent);margin-left:5px;}
 
-/* ===== COLLECTION ===== */
 .coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .coll-item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
 .coll-item:active{transform:scale(0.94);}
@@ -238,38 +154,20 @@ body{
 .empty-state .icon{font-size:3rem;margin-bottom:10px;}
 .empty-state p{font-size:0.78rem;line-height:1.7;}
 
-/* ===== BATTLE PAGE ===== */
-.battle-stage{
-  background:var(--panel);border:1px solid var(--border);border-radius:16px;
-  padding:16px;margin-bottom:12px;
-}
+.battle-stage{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
 .battle-fighters{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:16px;}
-.fighter-slot{
-  background:rgba(0,0,0,0.35);border:1px dashed var(--border);border-radius:12px;
-  padding:12px 8px;text-align:center;min-height:110px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  cursor:pointer;transition:all 0.2s;
-}
+.fighter-slot{background:rgba(0,0,0,0.35);border:1px dashed var(--border);border-radius:12px;padding:12px 8px;text-align:center;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all 0.2s;}
 .fighter-slot.filled{border-style:solid;border-color:var(--accent);background:rgba(0,255,204,0.04);}
 .fighter-slot.cpu-filled{border-color:var(--accent2);background:rgba(255,51,102,0.04);}
 .fighter-slot .fl{font-size:0.58rem;color:var(--text-dim);}
 .fighter-slot .fav{font-size:2.2rem;}
 .fighter-slot .fnm{font-size:0.62rem;color:var(--text);}
-
 .vs-badge{font-family:'Zen Dots',cursive;font-size:1.1rem;color:var(--accent2);text-shadow:0 0 15px rgba(255,51,102,0.5);}
-
-/* HPバー（バトル用） */
 .battle-hp-wrap{width:100%;margin-top:4px;}
 .battle-hp-label{display:flex;justify-content:space-between;font-size:0.55rem;color:var(--text-dim);margin-bottom:2px;}
 .battle-hp-bg{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
 .battle-hp-fill{height:100%;border-radius:4px;transition:width 0.6s ease,background-color 0.3s ease;background:linear-gradient(90deg,#ff4444,#ffaa00,#44ff88);background-size:300% 100%;}
-
-/* バトルログ */
-.battle-log{
-  background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:10px;
-  padding:12px;height:160px;overflow-y:auto;font-size:0.68rem;line-height:2;
-  color:var(--text-dim);scroll-behavior:smooth;
-}
+.battle-log{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:10px;padding:12px;height:160px;overflow-y:auto;font-size:0.68rem;line-height:2;color:var(--text-dim);scroll-behavior:smooth;}
 .log-sys{color:var(--text-dim);}
 .log-atk{color:#ff8866;}
 .log-mag{color:#cc88ff;}
@@ -278,65 +176,33 @@ body{
 .log-win{color:var(--accent3);font-weight:700;font-size:0.78rem;}
 .log-lose{color:var(--accent2);font-weight:700;}
 
-/* ===== BATTLE ANIMATIONS ===== */
 .fighter-slot.shake{animation:shake 0.4s ease;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
-
 .fighter-slot.hit-flash{animation:hitFlash 0.3s ease;}
 @keyframes hitFlash{0%,100%{background:rgba(0,0,0,0.35);}50%{background:rgba(255,51,102,0.25);}}
-
 .fighter-slot.attack-flash{animation:atkFlash 0.25s ease;}
 @keyframes atkFlash{0%,100%{background:rgba(0,0,0,0.35);}50%{background:rgba(0,255,204,0.15);}}
 
-/* ===== SKILL EFFECT ===== */
-.skill-effect{
-  position:fixed;inset:0;z-index:150;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;
-}
-.skill-effect-text{
-  font-family:'Zen Dots',cursive;font-size:2.5rem;
-  text-shadow:0 0 30px currentColor;
-  animation:skillPop 0.8s ease forwards;
-}
-@keyframes skillPop{
-  0%{opacity:0;transform:scale(0.3);}
-  30%{opacity:1;transform:scale(1.3);}
-  60%{opacity:1;transform:scale(1);}
-  100%{opacity:0;transform:scale(0.8) translateY(-30px);}
-}
+.skill-effect{position:fixed;inset:0;z-index:150;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.skill-effect-text{font-family:'Zen Dots',cursive;font-size:2.5rem;text-shadow:0 0 30px currentColor;animation:skillPop 0.8s ease forwards;}
+@keyframes skillPop{0%{opacity:0;transform:scale(0.3);}30%{opacity:1;transform:scale(1.3);}60%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(0.8) translateY(-30px);}}
 
-/* ===== WIN/LOSE OVERLAY ===== */
-#result-overlay{
-  position:fixed;inset:0;z-index:400;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.88);flex-direction:column;gap:16px;
-}
-.result-title{
-  font-family:'Zen Dots',cursive;font-size:3rem;
-  animation:resultAppear 0.6s cubic-bezier(0.34,1.56,0.64,1);
-}
+#result-overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.88);flex-direction:column;gap:16px;}
+.result-title{font-family:'Zen Dots',cursive;font-size:3rem;animation:resultAppear 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 .result-title.win{color:var(--accent3);text-shadow:0 0 40px rgba(255,204,0,0.8);}
 .result-title.lose{color:var(--accent2);text-shadow:0 0 40px rgba(255,51,102,0.6);}
 @keyframes resultAppear{from{opacity:0;transform:scale(0.3) rotate(-10deg);}to{opacity:1;transform:scale(1) rotate(0deg);}}
 .result-sub{font-size:0.85rem;color:var(--text-dim);text-align:center;animation:resultAppear 0.5s ease 0.3s both;}
 .result-exp{font-family:'Zen Dots',cursive;font-size:1.2rem;color:var(--accent);animation:resultAppear 0.5s ease 0.5s both;}
 
-/* ===== TOAST ===== */
-.toast{
-  position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
-  background:var(--accent);color:#000;padding:9px 20px;border-radius:50px;
-  font-size:0.78rem;font-weight:700;z-index:500;transition:transform 0.3s ease;white-space:nowrap;
-}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--accent);color:#000;padding:9px 20px;border-radius:50px;font-size:0.78rem;font-weight:700;z-index:500;transition:transform 0.3s ease;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
-/* ===== MODAL ===== */
 #select-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;padding:20px;overflow-y:auto;}
 .modal-inner{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px;}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-
 .section-title{font-size:0.62rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-
 #coll-count{color:var(--accent);font-size:0.8rem;}
 </style>
 </head>
@@ -345,7 +211,6 @@ body{
 <div id="particles"></div>
 <div id="flash-overlay"></div>
 
-<!-- 召喚オーバーレイ -->
 <div id="summon-overlay" onclick="closeSummon()">
   <div id="summon-circle" class="summon-circle">
     <div class="summon-rings">
@@ -360,7 +225,6 @@ body{
   <div class="summon-tap">タップして続ける</div>
 </div>
 
-<!-- 勝敗オーバーレイ -->
 <div id="result-overlay" onclick="closeResult()">
   <div id="result-title" class="result-title win">VICTORY!</div>
   <div id="result-sub" class="result-sub"></div>
@@ -379,7 +243,6 @@ body{
   <div class="tab" onclick="switchTab('battle')"><span class="tab-icon">⚔️</span>バトル</div>
 </div>
 
-<!-- スキャンページ -->
 <div id="page-scan" class="page active">
   <div class="scan-area">
     <div class="camera-view" id="camera-view">
@@ -388,6 +251,7 @@ body{
       <div class="scan-overlay" id="scan-overlay"><div class="scan-frame"><div class="scan-line"></div></div></div>
     </div>
     <button class="btn btn-primary btn-full" id="camera-btn" onclick="toggleCamera()">📷 カメラ起動</button>
+    <div class="scan-counter" id="scan-counter"></div>
     <div class="sep">— または手動入力 —</div>
     <div class="manual-input">
       <input type="number" id="barcode-input" placeholder="バーコード番号（例: 4901330000001）">
@@ -397,7 +261,6 @@ body{
   <div id="result-area"></div>
 </div>
 
-<!-- 図鑑ページ -->
 <div id="page-collection" class="page">
   <div class="section-title">コレクション <span id="coll-count">0</span></div>
   <div id="coll-grid" class="coll-grid">
@@ -405,7 +268,6 @@ body{
   </div>
 </div>
 
-<!-- バトルページ -->
 <div id="page-battle" class="page">
   <div class="battle-stage">
     <div class="section-title">バトル編成</div>
@@ -428,7 +290,6 @@ body{
   <div class="battle-log" id="battle-log"><div class="log-sys">▶ モンスターを選んでバトルを始めよう！</div></div>
 </div>
 
-<!-- 選択モーダル -->
 <div id="select-modal">
   <div class="modal-inner">
     <div class="modal-head">
@@ -548,7 +409,6 @@ function detectCategory(code){
   return'unknown';
 }
 
-// ハッシュベースのパラメータ生成（個性を出す）
 function hash32(str){
   let h=2166136261;
   for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=(h*16777619)>>>0;}
@@ -558,43 +418,21 @@ function seededRand(seed,min,max){
   const h=hash32(String(seed));
   return min+((h%(max-min+1))+max-min+1)%(max-min+1);
 }
-
 function generateParams(barcodeStr,element){
   const d=barcodeStr.replace(/\D/g,'');
   if(d.length<4)return null;
   const base=h=>seededRand(d+'_'+h,0,100);
-
-  // 属性傾向
   const bias={
-    food:{hp:1.3,pdef:1.1},
-    drink:{mp:1.4,matk:1.2},
-    sweets:{patk:1.3,spd:1.1},
-    book:{matk:1.5,mdef:1.2,patk:0.7},
-    daily:{pdef:1.4,mdef:1.3,spd:0.8},
-    unknown:{luck:1.5,evd:1.3},
+    food:{hp:1.3,pdef:1.1},drink:{mp:1.4,matk:1.2},sweets:{patk:1.3,spd:1.1},
+    book:{matk:1.5,mdef:1.2,patk:0.7},daily:{pdef:1.4,mdef:1.3,spd:0.8},unknown:{luck:1.5,evd:1.3},
   }[element]||{};
   const b=(k,def)=>{const v=base(k)+def;return Math.round(v*(bias[k]||1));};
-
-  return{
-    hp: b('hp',80)*3+100,
-    mp: b('mp',30)+40,
-    patk: b('patk',20)+20,
-    pdef: b('pdef',15)+15,
-    matk: b('matk',20)+20,
-    mdef: b('mdef',15)+15,
-    hit:  b('hit',50)+50,
-    evd:  b('evd',3)+3,
-    spd:  b('spd',8)+8,
-    luck: b('luck',1)+1,
-  };
+  return{hp:b('hp',80)*3+100,mp:b('mp',30)+40,patk:b('patk',20)+20,pdef:b('pdef',15)+15,
+    matk:b('matk',20)+20,mdef:b('mdef',15)+15,hit:b('hit',50)+50,evd:b('evd',3)+3,spd:b('spd',8)+8,luck:b('luck',1)+1};
 }
-
 function calcRarity(params){
   const score=params.patk+params.matk+params.spd*1.5+params.luck*2+params.hp*0.05;
-  if(score>220)return'legendary';
-  if(score>170)return'epic';
-  if(score>120)return'rare';
-  return'common';
+  if(score>220)return'legendary';if(score>170)return'epic';if(score>120)return'rare';return'common';
 }
 function generateSkills(params,rarity,barcode){
   const n={legendary:3,epic:2,rare:1,common:0}[rarity];
@@ -606,14 +444,11 @@ function generateName(barcode){
   const h=hash32(barcode);
   return PREFIXES[h%PREFIXES.length]+SUFFIXES[(h>>4)%SUFFIXES.length];
 }
-
 async function summonMonster(code){
   const digits=String(code).replace(/\D/g,'');
   if(digits.length<4){showToast('バーコードが短すぎます');return null;}
   let unique=null;
-  for(const prefix of Object.keys(UNIQUE_MONSTERS)){
-    if(digits.startsWith(prefix)){unique=UNIQUE_MONSTERS[prefix];break;}
-  }
+  for(const prefix of Object.keys(UNIQUE_MONSTERS)){if(digits.startsWith(prefix)){unique=UNIQUE_MONSTERS[prefix];break;}}
   const element=unique?unique.element:detectCategory(digits);
   const params=generateParams(digits,element);
   if(!params)return null;
@@ -646,21 +481,11 @@ function showSummonOverlay(monster){
   const rLabels={common:'COMMON',rare:'★ RARE',epic:'★★ EPIC',legendary:'★★★ LEGENDARY'};
   const rColors={common:'#778899',rare:'#3399ff',epic:'#cc44ff',legendary:'#ffaa00'};
   const rEl=document.getElementById('summon-rarity');
-  rEl.textContent=rLabels[monster.rarity];
-  rEl.style.color=rColors[monster.rarity];
-  ov.style.display='flex';
-  summonPending=monster;
-
-  // SE
+  rEl.textContent=rLabels[monster.rarity];rEl.style.color=rColors[monster.rarity];
+  ov.style.display='flex';summonPending=monster;
   ({common:seCommon,rare:seRare,epic:seEpic,legendary:seLegendary}[monster.rarity]||seCommon)();
-
-  // パーティクル
-  const pColors={
-    common:['#778899','#aabbcc'],
-    rare:['#3399ff','#66ccff','#ffffff'],
-    epic:['#cc44ff','#ff44cc','#ffffff','#aa88ff'],
-    legendary:['#ffaa00','#ffcc44','#ffffff','#ff8800','#ffee88'],
-  }[monster.rarity];
+  const pColors={common:['#778899','#aabbcc'],rare:['#3399ff','#66ccff','#ffffff'],
+    epic:['#cc44ff','#ff44cc','#ffffff','#aa88ff'],legendary:['#ffaa00','#ffcc44','#ffffff','#ff8800','#ffee88']}[monster.rarity];
   setTimeout(()=>spawnParticles(monster.rarity==='legendary'?60:monster.rarity==='epic'?40:20,pColors,50,40),200);
   if(monster.rarity==='legendary')flashScreen('#ffaa00',0.5);
   else if(monster.rarity==='epic')flashScreen('#cc44ff',0.35);
@@ -668,26 +493,18 @@ function showSummonOverlay(monster){
 }
 function closeSummon(){
   document.getElementById('summon-overlay').style.display='none';
-  if(summonPending){
-    renderScanResult(summonPending);
-    summonPending=null;
-  }
+  if(summonPending){renderScanResult(summonPending);summonPending=null;}
 }
 
 // ===== RENDER =====
-function rarityLabel(r){{return{common:'COMMON',rare:'RARE',epic:'EPIC',legendary:'LEGENDARY'}[r]||r;}}
-
+function rarityLabel(r){return{common:'COMMON',rare:'RARE',epic:'EPIC',legendary:'LEGENDARY'}[r]||r;}
 function renderMonsterCard(m,showAdd=true){
   const el=ELEMENTS[m.element]||ELEMENTS.unknown;
   const maxP=[['HP',m.hp||m.params.hp,m.params.hp],['MP',m.mp||m.params.mp,m.params.mp],
-    ['物攻',m.params.patk,200],['物防',m.params.pdef,200],
-    ['魔攻',m.params.matk,200],['魔防',m.params.mdef,200],
-    ['命中',m.params.hit,100],['回避',m.params.evd,50],
-    ['速度',m.params.spd,50],['運',m.params.luck,30]];
-  const skillsHtml=m.skills.length
-    ?`<div class="skills-row">${m.skills.map(s=>`<span class="skill-badge">${s.emoji} ${s.name}</span>`).join('')}</div>`:'';
-  const addBtn=showAdd
-    ?`<button class="btn btn-primary btn-full" style="margin-top:12px;font-size:0.78rem" onclick="addToCol(${m.id})">＋ 図鑑に追加</button>`:'';
+    ['物攻',m.params.patk,200],['物防',m.params.pdef,200],['魔攻',m.params.matk,200],['魔防',m.params.mdef,200],
+    ['命中',m.params.hit,100],['回避',m.params.evd,50],['速度',m.params.spd,50],['運',m.params.luck,30]];
+  const skillsHtml=m.skills.length?`<div class="skills-row">${m.skills.map(s=>`<span class="skill-badge">${s.emoji} ${s.name}</span>`).join('')}</div>`:'';
+  const addBtn=showAdd?`<button class="btn btn-primary btn-full" style="margin-top:12px;font-size:0.78rem" onclick="addToCol(${m.id})">＋ 図鑑に追加</button>`:'';
   return`<div class="monster-card ${m.rarity} animIn">
     <div class="monster-header">
       <div class="monster-avatar ${m.rarity}">${m.emoji}</div>
@@ -707,12 +524,10 @@ function renderMonsterCard(m,showAdd=true){
     ${skillsHtml}${addBtn}
   </div>`;
 }
-
 function renderScanResult(m){
   const already=collection.some(x=>x.barcode===m.barcode);
   document.getElementById('result-area').innerHTML=renderMonsterCard(m,!already);
 }
-
 function updateCollUI(){
   const grid=document.getElementById('coll-grid');
   document.getElementById('coll-count').textContent=collection.length;
@@ -722,7 +537,6 @@ function updateCollUI(){
   }
   grid.innerHTML=collection.map(m=>`<div class="coll-item ${m.rarity}" onclick="viewMonster(${m.id})"><div class="av">${m.emoji}</div><div class="nm">${m.name}</div><div class="lv">Lv.${m.lv}</div></div>`).join('');
 }
-
 function viewMonster(id){
   const m=collection.find(x=>x.id===id);if(!m)return;
   document.getElementById('result-area').innerHTML=renderMonsterCard(m,false)+
@@ -748,8 +562,7 @@ async function processScan(code){
   await new Promise(r=>setTimeout(r,600));
   const m=await summonMonster(code);
   if(!m){ra.innerHTML='<div class="empty-state"><div class="icon">❌</div><p>召喚失敗...<br>別のバーコードを試して！</p></div>';return;}
-  currentMonster=m;
-  showSummonOverlay(m);
+  currentMonster=m;showSummonOverlay(m);
 }
 function manualScan(){
   const v=document.getElementById('barcode-input').value.trim();
@@ -757,74 +570,96 @@ function manualScan(){
   processScan(v);
 }
 
-// ===== CAMERA (ZXing) =====
+// ===== CAMERA =====
+// v0.2.2.1 変更点:
+//   [A] 背面カメラ・HD解像度を明示指定（facingMode:'environment', ideal 1280x720）
+//       exact指定失敗時はフォールバックあり（前面カメラのみの端末対応）
+//   [C] 3回連続同一コード一致で確定（誤読防止）
+//       scan-counterでリアルタイムにデバッグ表示
 let zxingReader = null;
 let lastScanned = '';
-let lastScannedTime = 0;
+let scanCount = 0;  // [C] 連続一致カウンター
 
 async function toggleCamera(){
   if(cameraActive){stopCamera();return;}
   try{
-    const vid=document.getElementById('camera-video');
+    if(!window.ZXing){showToast('ライブラリ読み込み中...');return;}
 
-    if(!window.ZXing){ showToast('ライブラリ読み込み中...'); return; }
+    // [A] 背面カメラ・HD解像度を先にgetUserMediaで取得
+    let stream;
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:{exact:'environment'}, width:{ideal:1280}, height:{ideal:720} }
+      });
+    }catch(e){
+      // exactが失敗した場合（前面カメラのみ等）フォールバック
+      stream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:'environment' }
+      });
+    }
 
-    vid.style.display='block';
-    document.getElementById('camera-ph').style.display='none';
-    document.getElementById('scan-overlay').style.display='flex';
-    document.getElementById('camera-btn').textContent='⏹ カメラ停止';
-    cameraActive=true;
+    const vid = document.getElementById('camera-video');
+    vid.srcObject = stream;
+    vid.style.display = 'block';
+    document.getElementById('camera-ph').style.display = 'none';
+    document.getElementById('scan-overlay').style.display = 'flex';
+    document.getElementById('camera-btn').textContent = '⏹ カメラ停止';
+    cameraActive = true;
+    lastScanned = '';
+    scanCount = 0;
+    document.getElementById('scan-counter').textContent = '';
     showToast('📷 バーコードに近づけてください');
 
     zxingReader = new ZXing.BrowserMultiFormatReader();
 
-    zxingReader.decodeFromVideoDevice(undefined, 'camera-video', (result, err)=>{
+    // [A] null指定でsrcObjectのストリームをそのまま使用
+    zxingReader.decodeFromVideoDevice(null, 'camera-video', (result, err) => {
       if(!cameraActive) return;
       if(result){
         const code = result.getText();
-        const now = Date.now();
-        if(code === lastScanned && now - lastScannedTime < 2000) return;
-        lastScanned = code;
-        lastScannedTime = now;
-        playTone(880,'sine',0.15,0.4);
-        showToast('✅ ' + code + ' 読み取り成功！');
-        stopCamera();
-        processScan(code);
+
+        // [C] 3回連続一致で確定
+        if(code !== lastScanned){
+          lastScanned = code;
+          scanCount = 1;
+        } else {
+          scanCount++;
+        }
+
+        // デバッグ用カウンター表示
+        document.getElementById('scan-counter').textContent =
+          `読み取り中: ${code} (${scanCount}/3)`;
+
+        if(scanCount >= 3){
+          scanCount = 0;
+          lastScanned = '';
+          playTone(880,'sine',0.15,0.4);
+          showToast('✅ ' + code + ' 読み取り成功！');
+          stopCamera();
+          processScan(code);
+        }
       }
     });
 
   }catch(e){
     console.error(e);
     showToast('カメラのアクセスが必要です');
-    cameraActive=false;
+    cameraActive = false;
   }
 }
 
 function stopCamera(){
-  if(zxingReader){
-    try{zxingReader.reset();}catch(e){}
-    zxingReader=null;
-  }
-  const vid=document.getElementById('camera-video');
+  if(zxingReader){try{zxingReader.reset();}catch(e){}zxingReader=null;}
+  const vid = document.getElementById('camera-video');
   if(vid.srcObject){vid.srcObject.getTracks().forEach(t=>t.stop());vid.srcObject=null;}
-  vid.style.display='none';
-  document.getElementById('camera-ph').style.display='flex';
-  document.getElementById('scan-overlay').style.display='none';
-  document.getElementById('camera-btn').textContent='📷 カメラ起動';
-  cameraActive=false;
-}
-
-function stopCamera(){
-  if(zxingReader){
-    try{zxingReader.reset();}catch(e){}
-    zxingReader=null;
-  }
-  const vid=document.getElementById('camera-video');
-  vid.style.display='none';
-  document.getElementById('camera-ph').style.display='flex';
-  document.getElementById('scan-overlay').style.display='none';
-  document.getElementById('camera-btn').textContent='📷 カメラ起動';
-  cameraActive=false;
+  vid.style.display = 'none';
+  document.getElementById('camera-ph').style.display = 'flex';
+  document.getElementById('scan-overlay').style.display = 'none';
+  document.getElementById('camera-btn').textContent = '📷 カメラ起動';
+  document.getElementById('scan-counter').textContent = '';
+  cameraActive = false;
+  lastScanned = '';
+  scanCount = 0;
 }
 
 // ===== BATTLE =====
@@ -851,8 +686,7 @@ function openModal(){
 function closeModal(){document.getElementById('select-modal').style.display='none';}
 function pickMon(id){
   const m=JSON.parse(JSON.stringify(collection.find(x=>x.id===id)));
-  m.hp=m.params.hp;m.mp=m.params.mp;
-  battlePlayer=m;
+  m.hp=m.params.hp;m.mp=m.params.mp;battlePlayer=m;
   const sl=document.getElementById('slot-player');
   sl.classList.add('filled');
   sl.innerHTML=`<div class="fl">あなた</div><div class="fav">${m.emoji}</div><div class="fnm">${m.name}</div>
@@ -860,152 +694,103 @@ function pickMon(id){
     <div class="battle-hp-bg"><div class="battle-hp-fill" id="php-bar" style="width:100%"></div></div></div>`;
   closeModal();
 }
-
 function updateHP(el,barEl,cur,max){
   if(el)el.textContent=Math.max(0,cur);
   if(barEl){const pct=Math.max(0,Math.min(100,cur/max*100));barEl.style.width=pct+'%';barEl.style.backgroundPosition=pct>66?'0%':pct>33?'50%':'100%';}
 }
-
 async function startBattle(){
   if(!battlePlayer){showToast('モンスターを選択してください！');return;}
   if(isBattling)return;
-
-  // CPUランダム選択
   const cpu=JSON.parse(JSON.stringify(CPU_POOL[Math.floor(Math.random()*CPU_POOL.length)]));
   cpu.hp=cpu.params.hp;cpu.mp=cpu.params.mp;cpu.id=-1;
-
   const csl=document.getElementById('slot-cpu');
   csl.className='fighter-slot cpu-filled';
   csl.innerHTML=`<div class="fl">CPU</div><div class="fav">${cpu.emoji}</div><div class="fnm">${cpu.name}</div>
     <div class="battle-hp-wrap"><div class="battle-hp-label"><span>HP</span><span id="chp">${cpu.hp}</span></div>
     <div class="battle-hp-bg"><div class="battle-hp-fill" id="chp-bar" style="width:100%"></div></div></div>`;
-
   pState=JSON.parse(JSON.stringify(battlePlayer));
   cState=JSON.parse(JSON.stringify(cpu));
-
   isBattling=true;
   document.getElementById('battle-btn').textContent='⚔️ バトル中...';
   document.getElementById('battle-btn').disabled=true;
-
   const log=document.getElementById('battle-log');
   log.innerHTML='';
   const addLog=(text,cls='log-sys')=>{const d=document.createElement('div');d.className='log-line '+cls;d.textContent=text;log.appendChild(d);log.scrollTop=log.scrollHeight;};
   const delay=ms=>new Promise(r=>setTimeout(r,ms));
-
   addLog(`⚔️ ${pState.name} VS ${cState.name}！バトル開始！`,'log-sys');
   await delay(500);
-
   let turn=0;
   while(pState.hp>0&&cState.hp>0&&turn<40){
-    turn++;
-    addLog(`── ターン ${turn} ──`,'log-sys');
-    await delay(300);
-
-    // プレイヤーターン
+    turn++;addLog(`── ターン ${turn} ──`,'log-sys');await delay(300);
     const pSlot=document.getElementById('slot-player');
-    pSlot.classList.add('attack-flash');
-    setTimeout(()=>pSlot.classList.remove('attack-flash'),300);
-
-    // スキル発動チェック
+    pSlot.classList.add('attack-flash');setTimeout(()=>pSlot.classList.remove('attack-flash'),300);
     const pSkill=pState.skills.length&&Math.random()<0.25?pState.skills[Math.floor(Math.random()*pState.skills.length)]:null;
-    if(pSkill){
-      seSkill();
-      showSkillEffect(pSkill);
-      await delay(700);
-    }
-
+    if(pSkill){seSkill();showSkillEffect(pSkill);await delay(700);}
     const pHit=Math.random()*100<pState.params.hit;
     if(pHit){
       const useMag=pState.params.matk>pState.params.patk&&pState.mp>=10;
       let dmg;
       if(useMag){
         dmg=Math.max(1,Math.floor(pState.params.matk*(pSkill&&pSkill.type==='matk'?1.6:1)-cState.params.mdef*0.4+Math.random()*15));
-        pState.mp=Math.max(0,pState.mp-10);
-        seMagic();
+        pState.mp=Math.max(0,pState.mp-10);seMagic();
         addLog(`✨ ${pState.name}の魔法！ ${cState.name}に${dmg}ダメージ！`,'log-mag');
       }else{
         dmg=Math.max(1,Math.floor(pState.params.patk*(pSkill&&pSkill.type==='patk'?1.6:1)-cState.params.pdef*0.4+Math.random()*12));
-        seAttack();
-        addLog(`⚔️ ${pState.name}の攻撃！ ${cState.name}に${dmg}ダメージ！`,'log-atk');
+        seAttack();addLog(`⚔️ ${pState.name}の攻撃！ ${cState.name}に${dmg}ダメージ！`,'log-atk');
       }
       cState.hp=Math.max(0,cState.hp-dmg);
       const cslot=document.getElementById('slot-cpu');
       cslot.classList.add('shake','hit-flash');setTimeout(()=>cslot.classList.remove('shake','hit-flash'),400);
       spawnParticles(8,['#ff4466','#ff8844'],75,50);
       updateHP(document.getElementById('chp'),document.getElementById('chp-bar'),cState.hp,cState.params.hp);
-    }else{
-      seMiss();addLog(`💨 ${pState.name}の攻撃がはずれた！`,'log-miss');
-    }
-    await delay(500);
-    if(cState.hp<=0)break;
-
-    // CPUターン
+    }else{seMiss();addLog(`💨 ${pState.name}の攻撃がはずれた！`,'log-miss');}
+    await delay(500);if(cState.hp<=0)break;
     const cSlot2=document.getElementById('slot-cpu');
-    cSlot2.classList.add('attack-flash');
-    setTimeout(()=>cSlot2.classList.remove('attack-flash'),300);
-
+    cSlot2.classList.add('attack-flash');setTimeout(()=>cSlot2.classList.remove('attack-flash'),300);
     const cSkill=cState.skills.length&&Math.random()<0.25?cState.skills[Math.floor(Math.random()*cState.skills.length)]:null;
     const cHit=Math.random()*100<cState.params.hit;
     if(cHit){
       const dmg=Math.max(1,Math.floor(cState.params.patk*(cSkill?1.5:1)-pState.params.pdef*0.4+Math.random()*12));
-      seAttack();
-      addLog(`💢 ${cState.name}の攻撃！ ${pState.name}に${dmg}ダメージ！`,'log-atk');
+      seAttack();addLog(`💢 ${cState.name}の攻撃！ ${pState.name}に${dmg}ダメージ！`,'log-atk');
       pState.hp=Math.max(0,pState.hp-dmg);
       const pslot=document.getElementById('slot-player');
       pslot.classList.add('shake','hit-flash');setTimeout(()=>pslot.classList.remove('shake','hit-flash'),400);
       spawnParticles(8,['#ff2244','#ff6644'],25,50);
       updateHP(document.getElementById('php'),document.getElementById('php-bar'),pState.hp,pState.params.hp);
-    }else{
-      seMiss();addLog(`💨 ${cState.name}の攻撃がはずれた！`,'log-miss');
-    }
+    }else{seMiss();addLog(`💨 ${cState.name}の攻撃がはずれた！`,'log-miss');}
     await delay(400);
   }
-
   await delay(300);
   const won=pState.hp>0&&cState.hp<=0;
   const lost=pState.hp<=0&&cState.hp>0;
-
   let expGain=0;
   if(won){
-    seVictory();
-    spawnParticles(50,['#ffcc00','#ffee88','#ffffff','#ff8800'],50,40);
-    flashScreen('#ffaa00',0.4);
+    seVictory();spawnParticles(50,['#ffcc00','#ffee88','#ffffff','#ff8800'],50,40);flashScreen('#ffaa00',0.4);
     expGain=Math.floor(cState.params.hp/5+15);
     const orig=collection.find(x=>x.id===battlePlayer.id);
     if(orig){
-      orig.exp=(orig.exp||0)+expGain;
-      let lvUp=false;
+      orig.exp=(orig.exp||0)+expGain;let lvUp=false;
       while(orig.exp>=orig.lv*100){orig.exp-=orig.lv*100;orig.lv++;lvUp=true;}
-      saveCol();
-      if(lvUp)setTimeout(()=>showToast(`⬆️ ${orig.name} Lv.${orig.lv}に！`),1500);
+      saveCol();if(lvUp)setTimeout(()=>showToast(`⬆️ ${orig.name} Lv.${orig.lv}に！`),1500);
     }
     showResultOverlay(true,`${pState.name}の勝利！`,`経験値 +${expGain}`);
   }else if(lost){
-    seDefeat();
-    flashScreen('#ff0044',0.3);
+    seDefeat();flashScreen('#ff0044',0.3);
     showResultOverlay(false,`${pState.name}は敗北した...`,'また挑戦しよう！');
-  }else{
-    addLog('🤝 引き分け！','log-win');
-  }
-
+  }else{addLog('🤝 引き分け！','log-win');}
   isBattling=false;
   document.getElementById('battle-btn').textContent='⚔️ もう一度！';
   document.getElementById('battle-btn').disabled=false;
 }
-
 function showSkillEffect(skill){
-  const div=document.createElement('div');
-  div.className='skill-effect';
+  const div=document.createElement('div');div.className='skill-effect';
   div.innerHTML=`<div class="skill-effect-text" style="color:${skill.color}">${skill.emoji} ${skill.name}！</div>`;
-  document.body.appendChild(div);
-  setTimeout(()=>div.remove(),900);
+  document.body.appendChild(div);setTimeout(()=>div.remove(),900);
 }
-
-function showResultOverlay(win,title,sub,expText=''){
+function showResultOverlay(win,title,sub){
   const ov=document.getElementById('result-overlay');
   const t=document.getElementById('result-title');
-  t.textContent=win?'VICTORY!':'DEFEAT...';
-  t.className='result-title '+(win?'win':'lose');
+  t.textContent=win?'VICTORY!':'DEFEAT...';t.className='result-title '+(win?'win':'lose');
   document.getElementById('result-sub').textContent=title;
   document.getElementById('result-exp').textContent=sub;
   ov.style.display='flex';
@@ -1024,18 +809,16 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-// CSS animation for spinner
 const style=document.createElement('style');
 style.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
 document.head.appendChild(style);
 
-// 初期化
 updateCollUI();
 </script>
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.5</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.1</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
