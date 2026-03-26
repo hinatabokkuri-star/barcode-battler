@@ -1,24 +1,24 @@
 // ===== BARCODE BATTLER RPG - scanner.js =====
-// バージョン: v0.2.4.1
+// バージョン: v0.2.4.3
 // 担当: カメラ起動・ZBar WASMによるバーコード読み取り
-// 依存: zbar.js / zbar.wasm（同ディレクトリ）、game.jsのprocessScan()・showToast()・playTone()
+// ZBar WASMをCDNからdynamic importで読み込む方式
+// game.js の processScan() / showToast() / playTone() を使用
 
 let scanStream = null;
-let scanAnimFrame = null;
+let scanTimerId = null;
 let scanCanvas = null;
 let scanCtx = null;
-let zbarScanner = null;
 let cameraActive = false;
+let zbarScanImageData = null;
 
 async function initZBar(){
-  if(zbarScanner) return true;
+  if(zbarScanImageData) return true;
   try{
-    // zbar.jsがwindow.ZBarWasmを提供する
-    const { ZBarScanner } = await window.ZBarWasm;
-    zbarScanner = await ZBarScanner.create();
+    const mod = await import('https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.11.0/dist/index.js');
+    zbarScanImageData = mod.scanImageData;
     return true;
   }catch(e){
-    console.error('ZBar初期化失敗:', e);
+    console.error('ZBar読み込み失敗:', e);
     return false;
   }
 }
@@ -28,9 +28,8 @@ async function toggleCamera(){
   try{
     showToast('📷 初期化中...');
 
-    // ZBar初期化
     const ok = await initZBar();
-    if(!ok){ showToast('スキャナーの初期化に失敗しました'); return; }
+    if(!ok){ showToast('スキャナーの読み込みに失敗しました'); return; }
 
     // 背面カメラ取得
     let stream;
@@ -53,7 +52,6 @@ async function toggleCamera(){
     document.getElementById('camera-btn').textContent = '⏹ カメラ停止';
     cameraActive = true;
 
-    // オフスクリーンキャンバス（フレーム解析用）
     scanCanvas = document.createElement('canvas');
     scanCtx = scanCanvas.getContext('2d');
 
@@ -75,19 +73,15 @@ async function scanLoop(){
   const vid = document.getElementById('camera-video');
 
   try{
-    // ビデオフレームをキャンバスに描画
     scanCanvas.width = vid.videoWidth;
     scanCanvas.height = vid.videoHeight;
     scanCtx.drawImage(vid, 0, 0);
 
-    // ZBarでデコード
     const imageData = scanCtx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
-    const results = await zbarScanner.scanRGBAImage(
-      imageData.data, imageData.width, imageData.height
-    );
+    const symbols = await zbarScanImageData(imageData);
 
-    if(results.length > 0){
-      const code = results[0].decode();
+    if(symbols && symbols.length > 0){
+      const code = symbols[0].decode();
       document.getElementById('scan-counter').textContent = `✅ ${code}`;
       playTone(880,'sine',0.15,0.4);
       showToast('✅ ' + code + ' 読み取り成功！');
@@ -99,12 +93,11 @@ async function scanLoop(){
     // フレームエラーは無視
   }
 
-  // 約150msごとにスキャン（CPU負荷とのバランス）
-  scanAnimFrame = setTimeout(scanLoop, 150);
+  scanTimerId = setTimeout(scanLoop, 150);
 }
 
 function stopCamera(){
-  if(scanAnimFrame){ clearTimeout(scanAnimFrame); scanAnimFrame=null; }
+  if(scanTimerId){ clearTimeout(scanTimerId); scanTimerId=null; }
   if(scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream=null; }
   scanCanvas = null;
   scanCtx = null;
