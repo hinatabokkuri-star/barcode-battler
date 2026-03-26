@@ -1,36 +1,29 @@
 // ===== BARCODE BATTLER RPG - scanner.js =====
-// バージョン: v0.2.4.4
+// バージョン: v0.2.4.5
 // 担当: カメラ起動・ZBar WASMによるバーコード読み取り
-// ZBar WASMをCDNからdynamic importで読み込む方式
+// index.htmlで <script src="zbar-cdn.js"> を読み込み済みの前提
+// zbarWasm.scanImageData() がグローバルで使える
 // game.js の processScan() / showToast() / playTone() を使用
+
+const SCANNER_VERSION = 'v0.2.4.5';
 
 let scanStream = null;
 let scanTimerId = null;
 let scanCanvas = null;
 let scanCtx = null;
 let cameraActive = false;
-let zbarScanImageData = null;
-let scanLoopCount = 0;
-
-async function initZBar(){
-  if(zbarScanImageData) return true;
-  try{
-    const mod = await import('https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.11.0/dist/index.js');
-    zbarScanImageData = mod.scanImageData;
-    return true;
-  }catch(e){
-    console.error('ZBar読み込み失敗:', e);
-    return false;
-  }
-}
 
 async function toggleCamera(){
   if(cameraActive){ stopCamera(); return; }
   try{
-    showToast('📷 初期化中...');
+    // zbarWasm グローバル確認
+    if(typeof zbarWasm === 'undefined' || typeof zbarWasm.scanImageData !== 'function'){
+      showToast('スキャナーの読み込みに失敗しました');
+      console.error('zbarWasm.scanImageData が未定義:', typeof zbarWasm);
+      return;
+    }
 
-    const ok = await initZBar();
-    if(!ok){ showToast('スキャナーの読み込みに失敗しました'); return; }
+    showToast('📷 カメラ起動中...');
 
     // 背面カメラ取得
     let stream;
@@ -52,7 +45,6 @@ async function toggleCamera(){
     document.getElementById('scan-overlay').style.display = 'flex';
     document.getElementById('camera-btn').textContent = '⏹ カメラ停止';
     cameraActive = true;
-    scanLoopCount = 0;
 
     scanCanvas = document.createElement('canvas');
     scanCtx = scanCanvas.getContext('2d');
@@ -60,7 +52,7 @@ async function toggleCamera(){
     await new Promise(r => { vid.onloadedmetadata = r; });
     await vid.play();
 
-    document.getElementById('scan-counter').textContent = '📷 スキャン開始...';
+    document.getElementById('scan-counter').textContent = '📷 バーコードに近づけてください';
     scanLoop();
 
   }catch(e){
@@ -70,20 +62,19 @@ async function toggleCamera(){
   }
 }
 
+let _loopCount = 0;
 async function scanLoop(){
   if(!cameraActive) return;
   const vid = document.getElementById('camera-video');
-  scanLoopCount++;
+  _loopCount++;
 
-  // デバッグ：10回に1回カウンター更新
-  if(scanLoopCount % 10 === 0){
+  if(_loopCount % 10 === 0){
     document.getElementById('scan-counter').textContent =
-      `🔍 スキャン中... (${scanLoopCount}回 / ${vid.videoWidth}x${vid.videoHeight})`;
+      `🔍 スキャン中... (${_loopCount}回 ${vid.videoWidth}x${vid.videoHeight})`;
   }
 
   try{
     if(vid.videoWidth === 0 || vid.videoHeight === 0){
-      // ビデオまだ準備できていない
       scanTimerId = setTimeout(scanLoop, 150);
       return;
     }
@@ -93,7 +84,7 @@ async function scanLoop(){
     scanCtx.drawImage(vid, 0, 0);
 
     const imageData = scanCtx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
-    const symbols = await zbarScanImageData(imageData);
+    const symbols = await zbarWasm.scanImageData(imageData);
 
     if(symbols && symbols.length > 0){
       const code = symbols[0].decode();
@@ -105,7 +96,6 @@ async function scanLoop(){
       return;
     }
   }catch(e){
-    // エラー内容をカウンターに表示（デバッグ用）
     document.getElementById('scan-counter').textContent = `⚠️ ${e.message||e}`;
     console.error('scanLoop error:', e);
   }
@@ -118,6 +108,7 @@ function stopCamera(){
   if(scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream=null; }
   scanCanvas = null;
   scanCtx = null;
+  _loopCount = 0;
   const vid = document.getElementById('camera-video');
   vid.srcObject = null;
   vid.style.display = 'none';
@@ -126,5 +117,4 @@ function stopCamera(){
   document.getElementById('camera-btn').textContent = '📷 カメラ起動';
   document.getElementById('scan-counter').textContent = '';
   cameraActive = false;
-  scanLoopCount = 0;
 }

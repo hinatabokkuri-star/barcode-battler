@@ -258,10 +258,12 @@ body{background:var(--bg);color:var(--text);font-family:'M PLUS Rounded 1c',sans
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.4.1</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.4.5</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
+<!-- ZBar WASM: window.zbarWasm としてグローバルに提供される -->
+<script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.11.0/dist/index.js"></script>
 <script src="game.js"></script>
 <script src="scanner.js"></script>
 
