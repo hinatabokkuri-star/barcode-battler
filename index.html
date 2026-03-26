@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>バーコードバトラーRPG</title>
+<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Zen+Dots&family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap');
 
@@ -756,23 +757,59 @@ function manualScan(){
   processScan(v);
 }
 
-// ===== CAMERA =====
+// ===== CAMERA (ZXing) =====
+let zxingReader = null;
+let lastScanned = '';
+let lastScannedTime = 0;
+
 async function toggleCamera(){
   if(cameraActive){stopCamera();return;}
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    // ZXing初期化
+    if(!window.ZXing){showToast('スキャンライブラリ読み込み中...');return;}
+    zxingReader = new ZXing.BrowserMultiFormatReader();
+
     const vid=document.getElementById('camera-video');
-    vid.srcObject=stream;vid.style.display='block';
+    vid.style.display='block';
     document.getElementById('camera-ph').style.display='none';
     document.getElementById('scan-overlay').style.display='flex';
     document.getElementById('camera-btn').textContent='⏹ カメラ停止';
     cameraActive=true;
-    showToast('📷 カメラ起動 - 手動入力でも試せます');
-  }catch(e){showToast('カメラのアクセスが必要です');}
+    showToast('📷 バーコードに近づけてください');
+
+    // カメラデバイス取得（背面カメラ優先）
+    const devices = await ZXing.BrowserMultiFormatReader.listVideoInputDevices();
+    const backCamera = devices.find(d=>d.label.toLowerCase().includes('back')||d.label.toLowerCase().includes('rear')||d.label.includes('環境')) || devices[devices.length-1];
+    const deviceId = backCamera ? backCamera.deviceId : undefined;
+
+    zxingReader.decodeFromVideoDevice(deviceId, 'camera-video', (result, err) => {
+      if(result){
+        const code = result.getText();
+        const now = Date.now();
+        // 同じコードを2秒以内に再スキャンしない
+        if(code === lastScanned && now - lastScannedTime < 2000) return;
+        lastScanned = code;
+        lastScannedTime = now;
+        // 読み取り成功SE
+        playTone(880,'sine',0.1,0.3);
+        showToast('✅ スキャン成功！');
+        stopCamera();
+        processScan(code);
+      }
+    });
+  }catch(e){
+    console.error(e);
+    showToast('カメラのアクセスが必要です');
+    cameraActive=false;
+  }
 }
+
 function stopCamera(){
+  if(zxingReader){
+    try{zxingReader.reset();}catch(e){}
+    zxingReader=null;
+  }
   const vid=document.getElementById('camera-video');
-  if(vid.srcObject){vid.srcObject.getTracks().forEach(t=>t.stop());vid.srcObject=null;}
   vid.style.display='none';
   document.getElementById('camera-ph').style.display='flex';
   document.getElementById('scan-overlay').style.display='none';
