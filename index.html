@@ -767,13 +767,6 @@ async function toggleCamera(){
   try{
     const vid=document.getElementById('camera-video');
 
-    // Safari対策：先にカメラ許可を取得
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:{ideal:'environment'} }
-    });
-    // すぐ止める（ZXingが改めて起動するため）
-    stream.getTracks().forEach(t=>t.stop());
-
     if(!window.ZXing){ showToast('ライブラリ読み込み中...'); return; }
 
     vid.style.display='block';
@@ -1051,7 +1044,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.3</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.4</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
