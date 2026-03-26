@@ -778,16 +778,7 @@ async function toggleCamera(){
 
     zxingReader = new ZXing.BrowserMultiFormatReader();
 
-    // デバイス一覧取得→背面カメラ選択
-    const devices = await ZXing.BrowserMultiFormatReader.listVideoInputDevices();
-    const back = devices.find(d=>
-      d.label.toLowerCase().includes('back') ||
-      d.label.toLowerCase().includes('rear') ||
-      d.label.includes('環境')
-    ) || devices[devices.length - 1];
-    const deviceId = back ? back.deviceId : undefined;
-
-    zxingReader.decodeFromVideoDevice(deviceId, 'camera-video', (result, err)=>{
+    zxingReader.decodeFromVideoDevice(undefined, 'camera-video', (result, err)=>{
       if(!cameraActive) return;
       if(result){
         const code = result.getText();
@@ -1044,7 +1035,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.4</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.1.5</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
