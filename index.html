@@ -571,7 +571,10 @@ function manualScan(){
 }
 
 // ===== CAMERA =====
-// v0.2.2.1 変更点:
+// v0.2.2.2 変更点:
+//   [B] TRY_HARDERヒント追加（フェーズ2）
+//       ZXingが画像全体を精査してバーコードを探すモード
+//       パッケージ模様への誤反応を抑制し、本物のバーコード検出精度を向上
 //   [A] 背面カメラ・HD解像度を明示指定（facingMode:'environment', ideal 1280x720）
 //       exact指定失敗時はフォールバックあり（前面カメラのみの端末対応）
 //   [C] 3回連続同一コード一致で確定（誤読防止）
@@ -610,7 +613,10 @@ async function toggleCamera(){
     document.getElementById('scan-counter').textContent = '';
     showToast('📷 バーコードに近づけてください');
 
-    zxingReader = new ZXing.BrowserMultiFormatReader();
+    // [B] TRY_HARDERヒント追加（本物のバーコードを精査するモード）
+    const hints = new Map();
+    hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+    zxingReader = new ZXing.BrowserMultiFormatReader(hints);
 
     // [A] null指定でsrcObjectのストリームをそのまま使用
     zxingReader.decodeFromVideoDevice(null, 'camera-video', (result, err) => {
@@ -818,7 +824,7 @@ updateCollUI();
 
 <footer style="text-align:center;padding:20px 16px 32px;color:var(--text-dim);font-size:0.6rem;letter-spacing:1px;border-top:1px solid var(--border);margin-top:8px;position:relative;z-index:10;">
   <div style="font-family:'Zen Dots',cursive;font-size:0.75rem;color:var(--accent);margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,204,0.3);">hinabon.jp</div>
-  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.1</div>
+  <div>BARCODE BATTLER RPG &nbsp;v0.2.2.2</div>
   <div style="margin-top:4px;">© 2026 hinabon.jp All rights reserved.</div>
 </footer>
 
