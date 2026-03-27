@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ひなたぼっくり 雀魂ダッシュボード v9</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- データファイル読み込み：hinata_data.js を同じフォルダに置くこと -->
+<script src="hinata_data.js"></script>
+
+<style>
+:root{--bg:#080c14;--bg2:#0d1520;--bg3:#111d2e;--border:#1e3a5f;--accent:#00d4ff;--accent2:#ff6b35;--accent3:#7fff7f;--accent4:#ffd700;--warn:#ff4444;--text:#c8d8e8;--dim:#5a7a9a;--bright:#eaf4ff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,rgba(0,100,200,.08),transparent 50%),radial-gradient(ellipse at 85% 80%,rgba(0,180,255,.05),transparent 50%);pointer-events:none;z-index:0}
+.gbg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:24px}
+header{padding:32px 0 24px;border-bottom:1px solid var(--border);margin-bottom:0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,60px);letter-spacing:4px;color:var(--bright);line-height:1;text-shadow:0 0 40px rgba(0,212,255,.4)}
+.h1 span{color:var(--accent)}
+.hsub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:2px;margin-top:6px}
+.sbadge{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.05));border:1px solid rgba(255,215,0,.4);border-radius:4px;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent4);text-align:right}
+.sbadge strong{font-size:18px;display:block;color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.5)}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:14px 22px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.pane{display:none;padding-top:24px}
+.pane.on{display:block}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:24px}
+.kcard{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:13px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;animation:fu .4s ease both}
+.kcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.6}
+.kcard.warn::before{background:var(--warn)}.kcard.good::before{background:var(--accent3)}.kcard.gold::before{background:var(--accent4)}.kcard.ora::before{background:var(--accent2)}
+.kl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.kv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--bright);line-height:1}
+.kcard.warn .kv{color:var(--warn)}.kcard.good .kv{color:var(--accent3)}.kcard.gold .kv{color:var(--accent4)}.kcard.ora .kv{color:var(--accent2)}
+.ks{font-size:10px;color:var(--dim);margin-top:3px}
+.st{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.st::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;margin-bottom:24px}
+.cc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;animation:fu .4s ease both}
+.ct{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
+.cw{position:relative;height:240px}
+.cw.tall{height:290px}
+.fw{grid-column:1/-1}
+.coll{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
+.ch{padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s}
+.ch:hover{background:var(--bg3)}
+.cht{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.arr{color:var(--dim);transition:transform .3s;font-size:11px}
+.cb{padding:0 16px 16px;display:none}
+.cb.op{display:block}
+.ch.op .arr{transform:rotate(180deg)}
+.dt{width:100%;border-collapse:collapse;font-size:11px}
+.dt th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.dt td{padding:6px 9px;border-bottom:1px solid rgba(30,58,95,.3);color:var(--text);white-space:nowrap}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:rgba(0,212,255,.03)}
+.r1c{color:var(--accent4);font-weight:700}.r2c{color:var(--accent)}.r3c{color:var(--dim)}.r4c{color:var(--warn)}
+.bdg{display:inline-block;padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700}
+.bs{background:rgba(255,215,0,.12);color:var(--accent4);border:1px solid rgba(255,215,0,.3)}
+.ba{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.25)}
+.bb{background:rgba(158,158,158,.1);color:#9e9e9e;border:1px solid rgba(158,158,158,.25)}
+.bc{background:rgba(255,68,68,.1);color:var(--warn);border:1px solid rgba(255,68,68,.25)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-bottom:24px}
+.ac{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;animation:fu .5s ease both}
+.ac h3{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(30,58,95,.35)}
+.sr:last-child{border-bottom:none}
+.sl{color:var(--dim);font-size:11px}
+.sv{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--bright)}
+.sv.g{color:var(--accent3)}.sv.w{color:var(--warn)}.sv.gold{color:var(--accent4)}.sv.o{color:var(--accent2)}.sv.a{color:var(--accent)}
+.ins{background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:11px 13px;margin-top:12px;font-size:11px;color:var(--text);line-height:1.8}
+.ins.w{border-color:var(--warn)}.ins.g{border-color:var(--accent3)}.ins.gold{border-color:var(--accent4)}
+.ins strong{color:var(--bright)}
+.skr{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.skn{width:110px;font-size:11px;color:var(--dim);flex-shrink:0}
+.skt{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.skf{height:100%;border-radius:3px;background:linear-gradient(to right,var(--accent2),var(--accent));animation:gb 1.2s ease both}
+@keyframes gb{from{width:0!important}}
+.skp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--bright);width:34px;text-align:right}
+.hg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-bottom:12px}
+.hi{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:9px 13px;display:flex;justify-content:space-between;align-items:center}
+.hk{font-size:11px;color:var(--dim)}
+.hv{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--bright)}
+.hv.g{color:var(--accent3)}.hv.w{color:var(--warn)}.hv.gold{color:var(--accent4)}
+.tli{display:flex;gap:12px;align-items:flex-start;margin-bottom:11px}
+.tld{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0}
+.tld.w{background:var(--warn)}.tld.g{background:var(--accent3)}.tld.gold{background:var(--accent4)}.tld.d{background:var(--dim)}
+.tlc{font-size:11px;color:var(--text);line-height:1.7}
+.tlt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);margin-right:8px}
+.maka-rank-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.maka-rank-label{font-family:'JetBrains Mono',monospace;font-size:11px;width:50px;flex-shrink:0}
+.maka-rank-track{flex:1;height:20px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.maka-rank-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--bg);font-weight:700;transition:width 1s ease}
+.maka-table{width:100%;border-collapse:collapse;font-size:11px}
+.maka-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border);text-align:center}
+.maka-table td{padding:7px 10px;border-bottom:1px solid rgba(30,58,95,.3);text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px}
+.maka-table tr:hover td{background:rgba(0,212,255,.03)}
+footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.flogo{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:var(--dim)}
+.fmeta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);text-align:right;line-height:1.8}
+.ld{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ntag{display:inline-block;background:rgba(255,107,53,.12);color:var(--accent2);border:1px solid rgba(255,107,53,.3);border-radius:3px;padding:1px 6px;font-size:9px;font-family:'JetBrains Mono',monospace}
+.tz-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px 12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
+.tz-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);width:100px;flex-shrink:0}
+.tz-bars{flex:1;display:flex;flex-direction:column;gap:4px}
+.tz-bar-row{display:flex;align-items:center;gap:6px}
+.tz-bar-label{font-size:9px;color:var(--dim);width:50px;text-align:right;flex-shrink:0}
+.tz-bar-track{flex:1;height:8px;background:rgba(30,58,95,.6);border-radius:4px;overflow:hidden}
+.tz-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.tz-stat{font-family:'JetBrains Mono',monospace;font-size:11px;width:80px;text-align:right;flex-shrink:0}
+.nth-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.nth-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);width:55px;flex-shrink:0}
+.nth-track{flex:1;height:18px;background:var(--border);border-radius:4px;overflow:hidden}
+.nth-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--bg);font-weight:700}
+.nth-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);width:35px;text-align:right}
+.tz-strength-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:var(--bg3);border-radius:5px;border:1px solid var(--border)}
+.tz-str-label{font-family:'JetBrains Mono',monospace;font-size:11px;width:110px;flex-shrink:0}
+.tz-str-bar-track{flex:1;height:14px;background:var(--border);border-radius:3px;overflow:hidden}
+.tz-str-bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--bg);font-weight:700}
+</style>
+
+</head>
+<body>
+<div class="gbg"></div>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="h1">HINATA<span>BOKKURI</span></div>
+    <div class="hsub"><span class="ld"></span>玉の間・四人東 ／ CLAUDE超分析ダッシュボード v9</div>
+  </div>
+  <div class="sbadge">安定段位<strong id="sv">---</strong>実段位より上↑</div>
+</header>
+
+<div class="tabs">
+  <div class="tab on" onclick="sw('dash')">📊 DASHBOARD</div>
+  <div class="tab" onclick="sw('log')">📋 対局ログ</div>
+  <div class="tab" onclick="sw('hfy')">🔢 牌譜屋統計</div>
+  <div class="tab" onclick="sw('ana')">🧠 分析</div>
+  <div class="tab" onclick="sw('maka')">🎯 MAKA相関</div>
+  <div class="tab" onclick="sw('hnd')">🤝 引き継ぎ</div>
+</div>
+
+<div id="pane-dash" class="pane on">
+  <div class="kgrid" id="kgrid"></div>
+  <div class="st">PERFORMANCE TIMELINE</div>
+  <div class="cgrid">
+    <div class="cc fw"><div class="ct">順位推移 ＋ 累積平均順位</div><div class="cw tall"><canvas id="cTL"></canvas></div></div>
+    <div class="cc"><div class="ct">MAKA評価分布（自分）</div><div class="cw"><canvas id="cMaka"></canvas></div></div>
+    <div class="cc"><div class="ct">順位分布</div><div class="cw"><canvas id="cRank"></canvas></div></div>
+    <div class="cc"><div class="ct">期間別成績比較</div><div class="cw"><canvas id="cPer"></canvas></div></div>
+    <div class="cc"><div class="ct">能力レーダー ── 豪1平均比</div><div class="cw"><canvas id="cRdr"></canvas></div></div>
+  </div>
+</div>
+
+<div id="pane-log" class="pane">
+  <div class="coll">
+    <div class="ch op" onclick="tc(this)"><span class="cht">全 <span id="lc">-</span> 対局ログ</span><span class="arr">▼</span></div>
+    <div class="cb op" style="overflow-x:auto">
+      <table class="dt" id="ltbl">
+        <thead><tr><th>#</th><th>日付</th><th>時刻</th><th>備考</th><th>順位</th><th>点数</th><th>MAKA</th><th>PT</th><th>1位</th><th>点</th><th>M</th><th>2位</th><th>点</th><th>M</th><th>3位</th><th>点</th><th>M</th><th>4位</th><th>点</th><th>M</th></tr></thead>
+        <tbody id="ltbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="pane-hfy" class="pane">
+  <div class="st">牌譜屋統計データ</div>
+  <div class="coll"><div class="ch op" onclick="tc(this)"><span class="cht">⚡ 基本指標</span><span class="arr">▼</span></div><div class="cb op"><div class="hg" id="hfb"></div></div></div>
+  <div class="coll"><div class="ch" onclick="tc(this)"><span class="cht">🎯 立直統計</span><span class="arr">▼</span></div><div class="cb"><div class="hg" id="hfr"></div></div></div>
+  <div class="coll"><div class="ch" onclick="tc(this)"><span class="cht">🀄 副露・その他</span><span class="arr">▼</span></div><div class="cb"><div class="hg" id="hfo"></div></div></div>
+  <div class="coll"><div class="ch" onclick="tc(this)"><span class="cht">💀 幸運度・不運定量</span><span class="arr">▼</span></div><div class="cb"><div class="hg" id="hfl"></div><div class="ins w" id="hfnote"></div></div></div>
+  <div class="coll"><div class="ch" onclick="tc(this)"><span class="cht">📊 和了・放銃形態グラフ</span><span class="arr">▼</span></div><div class="cb"><div class="cgrid"><div class="cc"><div class="ct">和了 / 放銃 / 放銃相手</div><div class="cw"><canvas id="cAg"></canvas></div></div></div></div></div>
+</div>
+
+<div id="pane-ana" class="pane">
+  <div class="st">DEEP ANALYSIS</div>
+  <div class="agrid">
+    <div class="ac">
+      <h3>⚡ 実力 vs 運の分離</h3>
+      <div class="sr"><span class="sl">安定段位</span><span class="sv gold" id="a-st">---</span></div>
+      <div class="sr"><span class="sl">実際の段位</span><span class="sv o" id="a-cr">---</span></div>
+      <div class="sr"><span class="sl">放銃率</span><span class="sv g" id="a-hs">---</span></div>
+      <div class="sr"><span class="sl">満貫超え放銃</span><span class="sv g">0回 ◎</span></div>
+      <div class="sr"><span class="sl">親被り率</span><span class="sv w" id="a-kb">---</span></div>
+      <div class="sr"><span class="sl">親被り平均打点</span><span class="sv w" id="a-kba">---</span></div>
+      <div class="ins g"><strong>結論：</strong>打牌品質は雀聖圏。段位乖離は<strong>避けようのない親被り集中</strong>が主因。収束すれば自然上昇。</div>
+    </div>
+    <div class="ac">
+      <h3>🎯 立直/ダマ/副露 評価</h3>
+      <div class="sr"><span class="sl">立直収支</span><span class="sv g" id="a-rb">---</span></div>
+      <div class="sr"><span class="sl">立直和了率</span><span class="sv g" id="a-rh">---</span></div>
+      <div class="sr"><span class="sl">先制率</span><span class="sv g" id="a-sk">---</span></div>
+      <div class="sr"><span class="sl">副露後放銃率</span><span class="sv g" id="a-fh">---</span></div>
+      <div class="sr"><span class="sl">ダマ率</span><span class="sv a" id="a-dm">---</span></div>
+      <div class="sr"><span class="sl">立直良形率</span><span class="sv g" id="a-ry">---</span></div>
+      <div class="ins">ダマ率の高さは打点価値の見極めができている証拠。副露後放銃率の低さは<strong>鳴き判断精度の高さ</strong>を示す。</div>
+    </div>
+    <div class="ac">
+      <h3>🔢 スキルプロファイル</h3>
+      <div id="skbars"></div>
+      <div class="ins">放銃回避・鳴き・押し引きは<strong>雀聖水準</strong>。課題はダマ系への対処と朝帯安定。</div>
+    </div>
+  </div>
+
+  <div class="st">🕐 時間帯別パフォーマンス</div>
+  <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="ac" style="grid-column:span 2">
+      <h3>📊 時間帯 × 順位分布</h3>
+      <div id="tz-detail"></div>
+      <div class="ins w"><strong>朝(6-12時)</strong>がラス率最高・かつ相手平均MAKAスコア最強。<strong>夜(18-24時)</strong>はラス率<strong>0%</strong>・平均順位2.19と最安定。</div>
+    </div>
+    <div class="ac">
+      <h3>🏯 時間帯別 卓強度（相手平均MAKA）</h3>
+      <div id="tz-strength"></div>
+      <div class="ins gold"><strong>朝が最強卓帯</strong>。自分のパフォーマンス低下との二重苦。夜帯が最も稼げる時間。</div>
+    </div>
+    <div class="ac">
+      <h3>📈 時間帯別 平均順位チャート</h3>
+      <div class="cw" style="height:200px"><canvas id="cTZ"></canvas></div>
+    </div>
+    <div class="ac">
+      <h3>🏆 時間帯別 トップ率 / ラス率</h3>
+      <div class="cw" style="height:200px"><canvas id="cTZRate"></canvas></div>
+    </div>
+  </div>
+
+  <div class="st">🔥 連戦疲労分析（温まり効果）</div>
+  <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="ac">
+      <h3>📊 同日何戦目か × 平均順位</h3>
+      <div id="nth-bars" style="margin-top:8px"></div>
+      <div class="ins g"><strong>疲れるほど強くなる！</strong> 温まり効果継続確認。連戦後半が黄金タイム。</div>
+    </div>
+    <div class="ac">
+      <h3>📈 何戦目か × 平均順位チャート</h3>
+      <div class="cw" style="height:220px"><canvas id="cNth"></canvas></div>
+    </div>
+    <div class="ac">
+      <h3>📋 連戦日の詳細</h3>
+      <div id="rentan-detail" style="max-height:280px;overflow-y:auto"></div>
+    </div>
+  </div>
+
+  <div class="st">📐 2位率の構造分析</div>
+  <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="ac">
+      <h3>📊 期待値からの偏差</h3>
+      <div id="rank-deviation"></div>
+      <div class="ins"><strong>ラス回避特化型</strong>プロファイル継続。PT計算上3位は±0圏のため<strong>1位獲得が収支の鍵</strong>。</div>
+    </div>
+    <div class="ac">
+      <h3>🔍 2位の内訳</h3>
+      <div id="nid-detail"></div>
+    </div>
+    <div class="ac">
+      <h3>🎯 接戦トップ・惜しい2位</h3>
+      <div id="close-games"></div>
+    </div>
+  </div>
+
+  <div class="st">ANALYST NOTES</div>
+  <div class="coll">
+    <div class="ch" onclick="tc(this)"><span class="cht">📝 Claude / ゆうくん コメントログ</span><span class="arr">▼</span></div>
+    <div class="cb" id="anotes"></div>
+  </div>
+</div>
+
+<div id="pane-maka" class="pane">
+  <div class="st">🎯 MAKA相関分析</div>
+  <div class="kgrid" id="maka-kpi"></div>
+  <div class="st">🧑 ひなた自身のMAKA分析</div>
+  <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="ac"><h3>📊 ひなたMAKA分布</h3><div class="cw" style="height:200px"><canvas id="cSelfMakaDist"></canvas></div></div>
+    <div class="ac"><h3>🎯 順位別 ひなた自身のMAKA平均</h3><div id="maka-self-rank-bars" style="margin-top:8px"></div><div class="ins a">自分のMAKAが高くても順位が取れない＝<strong>相手が強いから負けている</strong>証拠。</div></div>
+    <div class="ac"><h3>📈 自分のMAKAと順位の関係</h3><div id="maka-self-table"></div></div>
+  </div>
+  <div class="st">🏯 卓強度分析</div>
+  <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="ac" style="grid-column:span 2">
+      <h3>📊 ひなた順位別 卓平均MAKAスコア</h3>
+      <div id="maka-rank-bars" style="margin-top:8px"></div>
+      <div class="ins gold"><strong>MAKAスコア換算：</strong>S+=6/S=5/S-=4/A+=3.5/A=3/A-=2.5/B+=2/B=1.5/B-=1/C以下=0.5<br><strong>結論：</strong>強い卓ほど負ける構造が継続確認。</div>
+    </div>
+    <div class="ac"><h3>🏆 1位時の卓構成</h3><div id="maka-top-detail"></div></div>
+  </div>
+  <div class="cgrid">
+    <div class="cc"><div class="ct">順位別 卓平均MAKAスコア</div><div class="cw"><canvas id="cMakaRank"></canvas></div></div>
+    <div class="cc"><div class="ct">卓最高MAKAと結果の分布</div><div class="cw"><canvas id="cMakaTop"></canvas></div></div>
+    <div class="cc"><div class="ct">ひなたMAKA vs 卓平均MAKA（散布図）</div><div class="cw"><canvas id="cMakaSelf"></canvas></div></div>
+  </div>
+  <div class="st">全局 MAKAデータ</div>
+  <div class="coll">
+    <div class="ch" onclick="tc(this)"><span class="cht">📋 全局 4人MAKA一覧</span><span class="arr">▼</span></div>
+    <div class="cb" style="overflow-x:auto">
+      <table class="maka-table"><thead><tr><th>#</th><th>日付</th><th>ひなた順位</th><th>ひなたMAKA</th><th>卓平均</th><th>卓最高</th><th>1位MAKA</th><th>2位MAKA</th><th>3位MAKA</th><th>4位MAKA</th></tr></thead><tbody id="maka-tbody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="pane-hnd" class="pane">
+  <div class="st">🤝 CLAUDE 引き継ぎガイド</div>
+  <div class="agrid">
+    <div class="ac" style="grid-column:span 2">
+      <h3>📋 ファイル構成と更新方法</h3>
+      <div class="tli"><div class="tld g"></div><div class="tlc"><strong>ファイル構成：</strong>このHTML（永久保存・触らない）＋ hinata_data.js（毎回更新）を同じフォルダに置く</div></div>
+      <div class="tli"><div class="tld g"></div><div class="tlc"><strong>新局追加：</strong>牌譜画像をClaudeに送る → Claudeが hinata_data.js を更新して返す → 差し替えるだけ</div></div>
+      <div class="tli"><div class="tld a"></div><div class="tlc"><strong>Claudeへの引き継ぎ：</strong>hinata_data.js だけ渡せばOK。HTMLは不要。</div></div>
+      <div class="tli"><div class="tld a"></div><div class="tlc"><strong>PT計算式：</strong>100の位切り上げ→(切り上げ-25000)÷1000+ウマ(1位+15/2位+5/3位-5/4位-15)+段位点(1位+55/2位+30/3位0/4位-80)</div></div>
+      <div class="tli"><div class="tld gold"></div><div class="tlc"><strong>v9変更点：</strong>データ外部ファイル化（hinata_data.js）。HTML永久保存版。</div></div>
+    </div>
+    <div class="ac">
+      <h3>🎮 プレイヤープロフィール</h3>
+      <div class="sr"><span class="sl">名前</span><span class="sv">ひなたぼっくり</span></div>
+      <div class="sr"><span class="sl">卓</span><span class="sv">玉の間・四人東</span></div>
+      <div class="sr"><span class="sl">現段位</span><span class="sv o">雀豪★1</span></div>
+      <div class="sr"><span class="sl">安定段位</span><span class="sv gold" id="profile-stable">---</span></div>
+      <div class="sr"><span class="sl">打ち方</span><span class="sv">デジタル系・ラス回避型</span></div>
+    </div>
+    <div class="ac">
+      <h3>🧠 分析コンテキスト</h3>
+      <div class="tli"><div class="tld a"></div><div class="tlc">ダマ率の高さは<strong>打点価値見極め</strong>の証拠</div></div>
+      <div class="tli"><div class="tld a"></div><div class="tlc">副露後放銃率低さ＝<strong>鳴き判断精度高い</strong></div></div>
+      <div class="tli"><div class="tld w"></div><div class="tlc"><strong>朝帯は相手が強い</strong>＋自分のパフォーマンス低下の二重苦</div></div>
+      <div class="tli"><div class="tld gold"></div><div class="tlc"><strong>連戦後半が強い</strong>（温まり効果）</div></div>
+      <div class="tli"><div class="tld g"></div><div class="tlc"><strong>夜帯(18-24時)が最安定</strong>。ラス率0%継続</div></div>
+      <div class="tli"><div class="tld w"></div><div class="tlc"><strong>放銃時門前率54.55%</strong>がやや高め=ダマ系への対処が次の課題</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="flogo">HINATABOKKURI // CLAUDE v9</div>
+  <div class="fmeta" id="fmeta">---</div>
+</footer>
+</div>
+
+<script>
+// ▼▼▼ v9: 外部ファイル読み込み方式 ▼▼▼
+function getData(){ return typeof HINATA_DATA !== 'undefined' ? HINATA_DATA : null; }
+// ▲▲▲ hinata_data.js が同フォルダにあれば自動読み込み ▲▲▲
+
+const D=getData();
+if(!D){document.body.innerHTML='<div style="color:#ff4444;padding:40px;font-family:monospace"><h2>⚠ データ読み込みエラー</h2><p style="margin-top:12px">hinata_data.js が見つかりません。<br>このHTMLと同じフォルダに置いてください。</p></div>';throw 0;}
+const G=D.games,H=D.haifuya;
+
+function makaScore(m){const t={'S+':6,'S':5,'S-':4,'A+':3.5,'A':3,'A-':2.5,'B+':2,'B':1.5,'B-':1,'C+':0.7,'C':0.5,'C-':0.3,'D+':0.3,'D':0.2};return t[String(m||'').trim()]||1;}
+function makaColor(m){const s=String(m||'');if(s.includes('S'))return'var(--accent4)';if(s.includes('A'))return'var(--accent)';if(s.includes('B'))return'var(--dim)';return'var(--warn)';}
+const pct=v=>(+v).toFixed(1)+'%';
+const cm=v=>(+v).toLocaleString();
+function mBadge(m){const s=String(m||'');if(s.includes('S'))return`<span class="bdg bs">${s}</span>`;if(s.includes('A'))return`<span class="bdg ba">${s}</span>`;if(s.includes('B'))return`<span class="bdg bb">${s}</span>`;return`<span class="bdg bc">${s}</span>`;}
+const rCls=r=>['','r1c','r2c','r3c','r4c'][r]||'';
+const rIcon=r=>['','1位🥇','2位🥈','3位🥉','4位💢'][r]||r;
+
+const total=G.length;
+const topN=G.filter(g=>g.rank===1).length,lasN=G.filter(g=>g.rank===4).length;
+const avgRank=(G.reduce((a,g)=>a+g.rank,0)/total).toFixed(3);
+const avgScore=Math.round(G.reduce((a,g)=>a+g.score,0)/total);
+const topRate=(topN/total*100).toFixed(1),lasRate=(lasN/total*100).toFixed(1);
+const tlR=lasN?(topN/lasN).toFixed(2):'∞';
+const makaS=G.filter(g=>String(g.maka||'').includes('S')).length;
+const makaA=G.filter(g=>String(g.maka||'').includes('A')).length;
+const makaB=total-makaS-makaA;
+const cumAvg=G.map((_,i)=>(G.slice(0,i+1).reduce((a,g)=>a+g.rank,0)/(i+1)).toFixed(3));
+
+function ps(arr){const n=arr.length;if(!n)return{n,top:'0.0',las:'0.0',avg:'0.00'};return{n,top:(arr.filter(g=>g.rank===1).length/n*100).toFixed(1),las:(arr.filter(g=>g.rank===4).length/n*100).toFixed(1),avg:(arr.reduce((a,g)=>a+g.rank,0)/n).toFixed(2)};}
+const p1=ps(G.filter(g=>g.id<=15)),p2=ps(G.filter(g=>g.id>15&&g.id<=31)),p3=ps(G.filter(g=>g.id>31));
+
+function sw(id){['dash','log','hfy','ana','maka','hnd'].forEach((t,i)=>{document.getElementById('pane-'+t).classList.toggle('on',t===id);document.querySelectorAll('.tab')[i].classList.toggle('on',t===id);});}
+function tc(h){const b=h.nextElementSibling,open=b.classList.contains('op');b.classList.toggle('op',!open);h.classList.toggle('op',!open);}
+
+function timeZone(t){const h=parseInt(t.split(':')[0]);if(h<6)return'深夜(0-6時)';if(h<12)return'朝(6-12時)';if(h<18)return'昼(12-18時)';return'夜(18-24時)';}
+const TZ_ORDER=['朝(6-12時)','昼(12-18時)','夜(18-24時)','深夜(0-6時)'];
+const TZ_COLORS=['rgba(255,215,0,.7)','rgba(0,212,255,.6)','rgba(127,255,127,.7)','rgba(255,107,53,.7)'];
+
+function buildDailyGroups(){const daily={};G.forEach(g=>{if(!daily[g.date])daily[g.date]=[];daily[g.date].push(g);});return daily;}
+function tableAvgScore(g){return(makaScore(g.m1)+makaScore(g.m2)+makaScore(g.m3)+makaScore(g.m4))/4;}
+function tableMaxScore(g){return Math.max(makaScore(g.m1),makaScore(g.m2),makaScore(g.m3),makaScore(g.m4));}
+
+function renderKPI(){
+  document.getElementById('sv').textContent=H.stable_rank;
+  if(document.getElementById('profile-stable'))document.getElementById('profile-stable').textContent=H.stable_rank;
+  const kpis=[
+    {l:'総対局数',v:total+'局',s:'記録中',c:''},
+    {l:'平均順位',v:avgRank,s:'雀聖圏水準',c:'good'},
+    {l:'トップ率',v:topRate+'%',s:topN+'回/'+total+'戦',c:'good'},
+    {l:'ラス率',v:lasRate+'%',s:lasN+'回/'+total+'戦',c:lasRate>15?'warn':'good'},
+    {l:'T/L比',v:tlR,s:'期待値1.00',c:'gold'},
+    {l:'平均点数',v:cm(avgScore),s:'全体比',c:''},
+    {l:'親被り率',v:H.itai_kaburi_rate+'%',s:'上位不運帯 ⚠',c:'warn'},
+    {l:'放銃率',v:H.housha_rate+'%',s:'◎ 優秀',c:'good'},
+  ];
+  document.getElementById('kgrid').innerHTML=kpis.map((k,i)=>`<div class="kcard ${k.c}" style="animation-delay:${i*.05}s"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="ks">${k.s}</div></div>`).join('');
+}
+
+function renderLog(){
+  document.getElementById('lc').textContent=total;
+  document.getElementById('ltbody').innerHTML=G.map(g=>{
+    const rc=rCls(g.rank),note=g.note?`<span class="ntag">${g.note}</span>`:'';
+    const pt=g.pt!=null?(g.pt>0?`<span style="color:var(--accent3)">+${g.pt}</span>`:`<span style="color:var(--warn)">${g.pt}</span>`):'<span style="color:var(--dim)">-</span>';
+    const mf=m=>`<span style="font-size:9px;color:${makaColor(m)}">${m||'-'}</span>`;
+    return`<tr><td style="color:var(--dim)">${g.id}</td><td>${g.date.slice(5)}</td><td style="font-family:monospace">${g.time}</td><td>${note}</td><td class="${rc}">${rIcon(g.rank)}</td><td class="${rc}" style="font-family:monospace">${cm(g.score)}</td><td>${mBadge(g.maka)}</td><td style="font-family:monospace;font-size:10px">${pt}</td><td style="color:var(--dim);font-size:10px">${g.p1}</td><td style="font-family:monospace;font-size:10px">${cm(g.s1)}</td><td>${mf(g.m1)}</td><td style="color:var(--dim);font-size:10px">${g.p2}</td><td style="font-family:monospace;font-size:10px">${cm(g.s2)}</td><td>${mf(g.m2)}</td><td style="color:var(--dim);font-size:10px">${g.p3}</td><td style="font-family:monospace;font-size:10px">${cm(g.s3)}</td><td>${mf(g.m3)}</td><td style="color:var(--dim);font-size:10px">${g.p4}</td><td style="font-family:monospace;font-size:10px">${cm(g.s4)}</td><td>${mf(g.m4)}</td></tr>`;
+  }).join('');
+}
+
+function hi(k,v,c=''){return`<div class="hi"><span class="hk">${k}</span><span class="hv ${c}">${v}</span></div>`;}
+function renderHaifuya(){
+  document.getElementById('hfb').innerHTML=[hi('記録段位',H.record_rank),hi('安定段位',H.stable_rank,'gold'),hi('和了率',pct(H.houra_rate),'g'),hi('ツモ率',pct(H.tsumo_rate)),hi('放銃率',pct(H.housha_rate),'g'),hi('ダマ率',pct(H.dama_rate)),hi('副露率',pct(H.furo_rate)),hi('立直率',pct(H.riichi_rate)),hi('流局率',pct(H.ryukyoku_rate)),hi('流局聴牌率',pct(H.ryukyoku_tenpai_rate)),hi('平均和了',cm(H.avg_houra)),hi('平均放銃',cm(H.avg_housha)),hi('平均順位',H.avg_rank),hi('飛び率',pct(H.tobi_rate),'g'),hi('総計局数',H.total_kyoku+'局')].join('');
+  document.getElementById('hfr').innerHTML=[hi('立直和了率',pct(H.riichi_houra),'g'),hi('立直放銃A',pct(H.riichi_housha_a)),hi('立直放銃B',pct(H.riichi_housha_b)),hi('立直収支','+'+cm(H.riichi_balance),'g'),hi('先制率',pct(H.sakisei_rate),'g'),hi('追っかけ率',pct(H.oikake_rate)),hi('追っかけられ率',pct(H.oikakekare_rate)),hi('一発率',pct(H.ippatsu_rate)),hi('立直多面',pct(H.riichi_tamen)),hi('立直良形',pct(H.riichi_ryokei),'g')].join('');
+  document.getElementById('hfo').innerHTML=[hi('副露後和了率',pct(H.furo_houra_rate),'g'),hi('副露後放銃率',pct(H.furo_housha_rate),'g'),hi('放銃時立直率',pct(H.housha_riichi_rate)),hi('銃点損失',cm(H.gun_loss)),hi('局収支','+'+cm(H.kyoku_balance),'g'),hi('最大連荘',H.max_renso),hi('裏ドラ率',pct(H.ura_rate)),hi('役満',H.yakuman),hi('配牌向聴',H.haipai_shaneten),hi('親配牌向聴',H.oya_haipai),hi('子配牌向聴',H.ko_haipai)].join('');
+  document.getElementById('hfl').innerHTML=[hi('痛い親被り率',pct(H.itai_kaburi_rate),'w'),hi('痛い親被り平均',cm(H.itai_kaburi_avg)+'点','w')].join('');
+  document.getElementById('hfnote').innerHTML=`<strong>注記：</strong>${H.notes}`;
+}
+
+function renderAnalysis(){
+  document.getElementById('a-st').textContent=H.stable_rank;
+  document.getElementById('a-cr').textContent=H.record_rank;
+  document.getElementById('a-hs').textContent=pct(H.housha_rate)+' ◎';
+  document.getElementById('a-kb').textContent=pct(H.itai_kaburi_rate)+' 上位不運帯';
+  document.getElementById('a-kba').textContent=cm(H.itai_kaburi_avg)+'点';
+  document.getElementById('a-rb').textContent='+'+cm(H.riichi_balance);
+  document.getElementById('a-rh').textContent=pct(H.riichi_houra)+' ◎';
+  document.getElementById('a-sk').textContent=pct(H.sakisei_rate)+' ◎';
+  document.getElementById('a-fh').textContent=pct(H.furo_housha_rate)+' ◎';
+  document.getElementById('a-dm').textContent=pct(H.dama_rate);
+  document.getElementById('a-ry').textContent=pct(H.riichi_ryokei);
+  const skills=[{n:'放銃回避',s:86},{n:'鳴き判断',s:85},{n:'押し引き',s:82},{n:'ラス回避',s:87},{n:'トップ取り',s:65},{n:'理不尽耐性',s:55},{n:'ダマ系対処',s:35}];
+  document.getElementById('skbars').innerHTML=skills.map(s=>`<div class="skr"><span class="skn">${s.n}</span><div class="skt"><div class="skf" style="width:${s.s}%"></div></div><span class="skp">${s.s}</span></div>`).join('');
+  document.getElementById('anotes').innerHTML=D.analyst_notes.map(n=>`<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="font-family:monospace;font-size:10px;color:var(--dim);margin-bottom:3px">${n.date} / ${n.author}</div><div style="font-size:11px;color:var(--text);line-height:1.7">${n.note}</div></div>`).join('');
+
+  const tzData={};TZ_ORDER.forEach(z=>tzData[z]=[]);
+  G.forEach(g=>{const z=timeZone(g.time);if(tzData[z])tzData[z].push(g);});
+
+  document.getElementById('tz-detail').innerHTML=TZ_ORDER.map((z,i)=>{
+    const gs=tzData[z];if(!gs.length)return'';
+    const n=gs.length,avg=(gs.reduce((a,g)=>a+g.rank,0)/n).toFixed(2);
+    const tpR=(gs.filter(g=>g.rank===1).length/n*100).toFixed(0);
+    const lsR=(gs.filter(g=>g.rank===4).length/n*100).toFixed(0);
+    const col=TZ_COLORS[i];
+    const badge=lsR==0?'<span style="color:var(--accent3);font-size:10px">ラス0% ◎</span>':(+lsR>=20?'<span style="color:var(--warn);font-size:10px">⚠注意</span>':'');
+    return`<div class="tz-row"><span class="tz-label" style="color:${col.replace(',.7)',')')};"> ${z}</span><div class="tz-bars"><div class="tz-bar-row"><span class="tz-bar-label">トップ率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${tpR}%;background:${col}"></div></div><span class="tz-stat" style="color:var(--accent4)">${tpR}%</span></div><div class="tz-bar-row"><span class="tz-bar-label">ラス率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${lsR}%;background:rgba(255,68,68,.7)"></div></div><span class="tz-stat" style="color:${+lsR>=20?'var(--warn)':+lsR==0?'var(--accent3)':'var(--text)'}">${lsR}% ${badge}</span></div></div><span style="font-family:monospace;font-size:11px;color:var(--dim);width:55px;text-align:right">${n}局 / 平均${avg}</span></div>`;
+  }).join('');
+
+  const tzStrData={};TZ_ORDER.forEach(z=>tzStrData[z]={oppScores:[],tableScores:[]});
+  G.forEach(g=>{
+    const z=timeZone(g.time);if(!tzStrData[z])return;
+    const oppScores=['m1','m2','m3','m4'].filter((_,i)=>(i+1)!==g.rank).map(mk=>makaScore(g[mk]));
+    tzStrData[z].oppScores.push(...oppScores);
+    if(g.m1)tzStrData[z].tableScores.push(tableAvgScore(g));
+  });
+  const maxOppAvg=Math.max(...TZ_ORDER.map(z=>{const d=tzStrData[z];return d.oppScores.length?d.oppScores.reduce((a,b)=>a+b,0)/d.oppScores.length:0;}));
+  document.getElementById('tz-strength').innerHTML=TZ_ORDER.map((z,i)=>{
+    const d=tzStrData[z];if(!d.oppScores.length)return'';
+    const oAvg=(d.oppScores.reduce((a,b)=>a+b,0)/d.oppScores.length).toFixed(2);
+    const tAvg=d.tableScores.length?(d.tableScores.reduce((a,b)=>a+b,0)/d.tableScores.length).toFixed(2):'-';
+    const w=Math.round(+oAvg/maxOppAvg*100);
+    const col=TZ_COLORS[i];
+    return`<div class="tz-strength-row"><span class="tz-str-label" style="color:${col.replace(',.7)',')')};"> ${z}</span><div class="tz-str-bar-track"><div class="tz-str-bar-fill" style="width:${w}%;background:${col}">${oAvg}</div></div><span style="font-family:monospace;font-size:10px;color:var(--dim);margin-left:8px">相手avg:${oAvg} / 卓avg:${tAvg}</span></div>`;
+  }).join('');
+
+  const daily=buildDailyGroups();
+  const nth={};
+  Object.values(daily).filter(gs=>gs.length>=2).forEach(gs=>{
+    const sorted=gs.sort((a,b)=>a.time.localeCompare(b.time));
+    sorted.forEach((g,i)=>{if(!nth[i+1])nth[i+1]=[];nth[i+1].push(g.rank);});
+  });
+  const nthKeys=Object.keys(nth).map(Number).sort((a,b)=>a-b);
+  const nthAvgs=nthKeys.map(k=>nth[k].reduce((a,b)=>a+b,0)/nth[k].length);
+  const nthColors=nthAvgs.map(v=>v<=2.0?'#7fff7f':v<=2.3?'#00d4ff':v<=2.6?'#ffd700':'#ff4444');
+  document.getElementById('nth-bars').innerHTML=nthKeys.map((k,i)=>{
+    const avg=nthAvgs[i].toFixed(2),n=nth[k].length,w=Math.round(100-(nthAvgs[i]-1)/3*100);
+    return`<div class="nth-row"><span class="nth-label">${k}戦目</span><div class="nth-track"><div class="nth-fill" style="width:${Math.max(w,15)}%;background:${nthColors[i]}">${avg}</div></div><span class="nth-count">${n}局</span></div>`;
+  }).join('');
+
+  const multiDays=Object.entries(daily).filter(([,gs])=>gs.length>=2).sort(([a],[b])=>a.localeCompare(b));
+  document.getElementById('rentan-detail').innerHTML=multiDays.map(([date,gs])=>{
+    const sorted=gs.sort((a,b)=>a.time.localeCompare(b.time));
+    const rankHtml=sorted.map(g=>`<span class="${rCls(g.rank)}" style="font-weight:bold">${g.rank}</span>`).join('-');
+    const ids=sorted.map(g=>`#${g.id}`).join(' ');
+    return`<div style="padding:6px 0;border-bottom:1px solid rgba(30,58,95,.3);font-size:11px"><span style="color:var(--dim);font-family:monospace;font-size:10px">${date.slice(5)} ${gs.length}連戦 ${ids}</span><br><span style="font-family:monospace">順位: ${rankHtml}</span></div>`;
+  }).join('');
+
+  const rankCounts=[1,2,3,4].map(r=>G.filter(g=>g.rank===r).length);
+  const deviations=rankCounts.map(n=>(n/total*100-25).toFixed(1));
+  document.getElementById('rank-deviation').innerHTML=[1,2,3,4].map((r,i)=>{
+    const n=rankCounts[i],rate=(n/total*100).toFixed(1),dev=deviations[i];
+    const sign=+dev>=0?'+':'';
+    const devCol=i===3?(+dev<0?'var(--accent3)':'var(--warn)'):(+dev>0?'var(--accent)':'var(--accent3)');
+    return`<div class="sr"><span class="sl">${rIcon(r)}</span><span style="font-family:monospace;font-size:11px;color:var(--bright)">${n}局 (${rate}%)</span><span style="font-family:monospace;font-size:12px;color:${devCol};font-weight:bold">${sign}${dev}pp</span></div>`;
+  }).join('');
+
+  const twoGames=G.filter(g=>g.rank===2);
+  const closeWin=twoGames.filter(g=>g.s1-g.score<=5000);
+  const safeWin=twoGames.filter(g=>g.score-g.s3>=8000);
+  const avgGap=Math.round(twoGames.reduce((a,g)=>a+(g.s1-g.score),0)/twoGames.length);
+  document.getElementById('nid-detail').innerHTML=`<div class="sr"><span class="sl">全2位</span><span class="sv">${twoGames.length}局</span></div><div class="sr"><span class="sl">惜しい2位(差≤5000)</span><span class="sv w">${closeWin.length}局</span></div><div class="sr"><span class="sl">安全な2位(3位に8000↑)</span><span class="sv g">${safeWin.length}局</span></div><div class="sr"><span class="sl">平均1位との差</span><span class="sv">${cm(avgGap)}点</span></div>`;
+
+  const topClose=G.filter(g=>g.rank===1).sort((a,b)=>(a.s1-a.s2)-(b.s1-b.s2)).slice(0,3);
+  const close2nd=G.filter(g=>g.rank===2).sort((a,b)=>(a.s1-a.score)-(b.s1-b.score)).slice(0,3);
+  document.getElementById('close-games').innerHTML=
+    `<div style="font-size:10px;color:var(--accent);font-family:monospace;margin-bottom:8px">😱 薄氷トップ</div>`+topClose.map(g=>`<div class="sr"><span class="sl">#${g.id} ${g.date.slice(5)}</span><span class="sv gold">2位に${cm(g.s1-g.s2)}点差</span></div>`).join('')+
+    `<div style="font-size:10px;color:var(--accent);font-family:monospace;margin:10px 0 8px">🔥 惜しい2位</div>`+close2nd.map(g=>`<div class="sr"><span class="sl">#${g.id} ${g.date.slice(5)}</span><span class="sv w">あと${cm(g.s1-g.score)}点</span></div>`).join('');
+}
+
+function renderMakaAnalysis(){
+  const byRank={1:[],2:[],3:[],4:[]};
+  G.forEach(g=>{if(g.m1)byRank[g.rank].push(tableAvgScore(g));});
+  const rankAvg={};[1,2,3,4].forEach(r=>{const a=byRank[r];rankAvg[r]=a.length?a.reduce((x,y)=>x+y,0)/a.length:0;});
+  const allScores=G.filter(g=>g.m1).map(tableAvgScore);
+  const overallAvg=allScores.reduce((a,b)=>a+b,0)/allScores.length;
+  const selfMakaScores=G.map(g=>makaScore(g.maka));
+  const selfMakaAvg=selfMakaScores.reduce((a,b)=>a+b,0)/G.length;
+  const selfByRankScore={1:[],2:[],3:[],4:[]};
+  G.forEach(g=>selfByRankScore[g.rank].push(makaScore(g.maka)));
+  const selfRankAvg={};[1,2,3,4].forEach(r=>{const a=selfByRankScore[r];selfRankAvg[r]=a.length?+(a.reduce((a,b)=>a+b,0)/a.length).toFixed(2):0;});
+
+  document.getElementById('maka-kpi').innerHTML=[
+    {l:'分析対象',v:G.filter(g=>g.m1).length+'局',s:'全員MAKAあり',c:''},
+    {l:'ひなたMAKA平均',v:selfMakaAvg.toFixed(2),s:'自分の打牌品質',c:'good'},
+    {l:'1位時 卓平均',v:rankAvg[1].toFixed(2),s:'卓強さスコア',c:'good'},
+    {l:'4位時 卓平均',v:rankAvg[4].toFixed(2),s:'卓強さスコア',c:'warn'},
+    {l:'卓強度差',v:'+'+(rankAvg[4]-rankAvg[1]).toFixed(2),s:'4位卓が強い',c:'ora'},
+    {l:'全体卓平均',v:overallAvg.toFixed(2),s:'卓強度平均',c:''},
+  ].map((k,i)=>`<div class="kcard ${k.c}" style="animation-delay:${i*.05}s"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="ks">${k.s}</div></div>`).join('');
+
+  const selfMaxBar=Math.max(...Object.values(selfRankAvg));
+  const rankColors2=['#ffd700','#00d4ff','#9e9e9e','#ff4444'];
+  const rankLabels2=['1位🥇','2位🥈','3位🥉','4位💢'];
+  document.getElementById('maka-self-rank-bars').innerHTML=[1,2,3,4].map((r,i)=>{
+    const n=selfByRankScore[r].length,avg=selfRankAvg[r],p=Math.round(avg/selfMaxBar*100);
+    return`<div class="maka-rank-bar"><span class="maka-rank-label" style="color:${rankColors2[i]}">${rankLabels2[i]}</span><div class="maka-rank-track"><div class="maka-rank-fill" style="width:${p}%;background:${rankColors2[i]}">${avg}</div></div><span style="font-family:monospace;font-size:10px;color:var(--dim);width:40px;text-align:right">${n}局</span></div>`;
+  }).join('');
+
+  const maxBar=Math.max(...Object.values(rankAvg));
+  const rankColors=['#ffd700','#00d4ff','#9e9e9e','#ff4444'];
+  const rankLabels=['1位🥇','2位🥈','3位🥉','4位💢'];
+  document.getElementById('maka-rank-bars').innerHTML=[1,2,3,4].map((r,i)=>{
+    const n=byRank[r].length,avg=rankAvg[r],p=Math.round(avg/maxBar*100);
+    return`<div class="maka-rank-bar"><span class="maka-rank-label" style="color:${rankColors[i]}">${rankLabels[i]}</span><div class="maka-rank-track"><div class="maka-rank-fill" style="width:${p}%;background:${rankColors[i]}">${avg.toFixed(2)}</div></div><span style="font-family:monospace;font-size:10px;color:var(--dim);width:40px;text-align:right">${n}局</span></div>`;
+  }).join('');
+
+  const selfByRank={1:{},2:{},3:{},4:{}};
+  G.forEach(g=>{const sm=String(g.maka||'');const cat=sm.includes('S')?'S系':sm.includes('A')?'A系':'B系以下';if(!selfByRank[g.rank][cat])selfByRank[g.rank][cat]=0;selfByRank[g.rank][cat]++;});
+  const cats=['S系','A系','B系以下'];
+  document.getElementById('maka-self-table').innerHTML=`<table class="maka-table" style="width:100%"><thead><tr><th>自分MAKA</th><th>1位</th><th>2位</th><th>3位</th><th>4位</th></tr></thead><tbody>${cats.map(c=>`<tr><td style="color:${c==='S系'?'var(--accent4)':c==='A系'?'var(--accent)':'var(--dim)'}">${c}</td>${[1,2,3,4].map(r=>`<td>${selfByRank[r][c]||0}局</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  const topGames=G.filter(g=>g.rank===1&&g.m1);
+  const topAvgs=topGames.map(g=>{return{id:g.id,avg:tableAvgScore(g)}}).sort((a,b)=>a.avg-b.avg);
+  document.getElementById('maka-top-detail').innerHTML=topGames.length?topAvgs.map(t=>{const g=G.find(x=>x.id===t.id);return`<div class="sr"><span class="sl">#${g.id} ${g.date.slice(5)}</span><span class="sv ${t.avg<2.8?'g':t.avg>3.5?'w':''}">卓avg ${t.avg.toFixed(2)}</span></div>`}).join(''):'データなし';
+
+  document.getElementById('maka-tbody').innerHTML=G.map(g=>{
+    if(!g.m1)return`<tr><td>${g.id}</td><td>${g.date.slice(5)}</td><td class="${rCls(g.rank)}">${rIcon(g.rank)}</td><td>${g.maka}</td><td colspan="6" style="color:var(--dim)">-</td></tr>`;
+    const avg=tableAvgScore(g),max=tableMaxScore(g);
+    const mf=m=>`<span style="color:${makaColor(m)};font-weight:bold">${m||'-'}</span>`;
+    return`<tr><td>${g.id}</td><td>${g.date.slice(5)}</td><td class="${rCls(g.rank)}">${rIcon(g.rank)}</td><td>${mf(g.maka)}</td><td style="color:${avg>3.2?'var(--warn)':avg<2.5?'var(--accent3)':'var(--text)'}">${avg.toFixed(2)}</td><td>${max.toFixed(1)}</td><td>${mf(g.m1)}</td><td>${mf(g.m2)}</td><td>${mf(g.m3)}</td><td>${mf(g.m4)}</td></tr>`;
+  }).join('');
+}
+
+function renderFooter(){
+  const meta=D.meta;
+  document.getElementById('fmeta').innerHTML=`対象期間 ${G[0].date} – ${G[G.length-1].date}<br>${total}対局 / ${H.total_kyoku}局 / 玉の間四人東<br>v9: 外部データファイル方式 / 安定段位${H.stable_rank}`;
+}
+
+Chart.defaults.color='#5a7a9a';
+Chart.defaults.font.family="'JetBrains Mono',monospace";
+Chart.defaults.font.size=10;
+
+function renderCharts(){
+  const labels=G.map(g=>`#${g.id}`);
+  const rColors=G.map(g=>g.rank===1?'#ffd700':g.rank===2?'#00d4ff':g.rank===3?'#9e9e9e':'#ff4444');
+  new Chart(document.getElementById('cTL'),{type:'line',data:{labels,datasets:[{label:'順位',data:G.map(g=>g.rank),borderColor:'transparent',pointBackgroundColor:rColors,pointBorderColor:rColors,pointRadius:6,pointHoverRadius:9,showLine:false,yAxisID:'y'},{label:'累積平均',data:cumAvg,borderColor:'#00d4ff',borderWidth:2,pointRadius:0,tension:.4,fill:false,yAxisID:'y'}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{reverse:true,min:.5,max:4.5,ticks:{stepSize:1,callback:v=>v===1?'1位':v===2?'2位':v===3?'3位':v===4?'4位':''},grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'},ticks:{maxTicksLimit:24}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12}}}}});
+  new Chart(document.getElementById('cMaka'),{type:'doughnut',data:{labels:['S系','A系','B系以下'],datasets:[{data:[makaS,makaA,makaB],backgroundColor:['rgba(255,215,0,.8)','rgba(0,212,255,.75)','rgba(158,158,158,.6)'],borderColor:['#ffd700','#00d4ff','#9e9e9e'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:12,boxWidth:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}回 (${(ctx.raw/total*100).toFixed(1)}%)`}}}}});
+  new Chart(document.getElementById('cRank'),{type:'doughnut',data:{labels:['1位🥇','2位🥈','3位🥉','4位💢'],datasets:[{data:[1,2,3,4].map(r=>G.filter(g=>g.rank===r).length),backgroundColor:['rgba(255,215,0,.8)','rgba(0,212,255,.7)','rgba(100,100,120,.7)','rgba(255,68,68,.8)'],borderColor:['#ffd700','#00d4ff','#6e6e8e','#ff4444'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:12,boxWidth:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}回 (${(ctx.raw/total*100).toFixed(1)}%)`}}}}});
+  new Chart(document.getElementById('cPer'),{type:'bar',data:{labels:[`前半#1-15\n(${p1.n}局)`,`中盤#16-31\n(${p2.n}局)`,`直近#32-\n(${p3.n}局)`],datasets:[{label:'トップ率%',data:[p1.top,p2.top,p3.top],backgroundColor:'rgba(255,215,0,.7)',borderColor:'#ffd700',borderWidth:1},{label:'ラス率%',data:[p1.las,p2.las,p3.las],backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1},{label:'平均順位×10',data:[p1.avg*10,p2.avg*10,p3.avg*10],backgroundColor:'rgba(0,212,255,.5)',borderColor:'#00d4ff',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},beginAtZero:true},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
+  new Chart(document.getElementById('cRdr'),{type:'radar',data:{labels:['放銃回避','和了率','ラス回避','副露効率','先制率','立直収支','トップ率'],datasets:[{label:'ひなた',data:[86,72,87,80,83,78,65],backgroundColor:'rgba(0,212,255,.12)',borderColor:'#00d4ff',borderWidth:2,pointBackgroundColor:'#00d4ff',pointRadius:4},{label:'豪1平均(推定)',data:[70,68,75,65,68,60,65],backgroundColor:'rgba(255,107,53,.07)',borderColor:'rgba(255,107,53,.5)',borderWidth:1.5,borderDash:[4,4],pointBackgroundColor:'rgba(255,107,53,.5)',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{stepSize:20,backdropColor:'transparent',color:'#3a5a7a'},grid:{color:'rgba(30,58,95,.5)'},pointLabels:{color:'#8ab0cc',font:{size:10}},angleLines:{color:'rgba(30,58,95,.5)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12}}}}});
+  new Chart(document.getElementById('cAg'),{type:'bar',data:{labels:['立直','副露','ダマ/門前'],datasets:[{label:'和了時',data:[37.50,50.00,12.50],backgroundColor:'rgba(0,212,255,.7)',borderColor:'#00d4ff',borderWidth:1},{label:'放銃時',data:[15.15,30.30,54.55],backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1},{label:'放銃相手',data:[39.39,45.45,15.15],backgroundColor:'rgba(255,215,0,.5)',borderColor:'#ffd700',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},ticks:{callback:v=>v+'%'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
+
+  const selfMakaLabels=['S+','S','S-','A+','A','A-','B+','B','B-','C以下'];
+  const selfMakaCounts=selfMakaLabels.map(lbl=>G.filter(g=>{const m=String(g.maka||'').trim();if(lbl==='C以下')return m.startsWith('C')||m.startsWith('D');return m===lbl;}).length);
+  const selfMakaColors=selfMakaLabels.map(l=>l.includes('S')?'rgba(255,215,0,.8)':l.includes('A')?'rgba(0,212,255,.75)':'rgba(158,158,158,.6)');
+  new Chart(document.getElementById('cSelfMakaDist'),{type:'bar',data:{labels:selfMakaLabels,datasets:[{label:'回数',data:selfMakaCounts,backgroundColor:selfMakaColors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},ticks:{stepSize:1},beginAtZero:true},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw}局 (${(ctx.raw/G.length*100).toFixed(1)}%)`}}}}});
+
+  const byRankM={1:[],2:[],3:[],4:[]};
+  G.forEach(g=>{if(g.m1)byRankM[g.rank].push(tableAvgScore(g));});
+  const rankAvgM=[1,2,3,4].map(r=>{const a=byRankM[r];return a.length?+(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):0;});
+  new Chart(document.getElementById('cMakaRank'),{type:'bar',data:{labels:['1位🥇','2位🥈','3位🥉','4位💢'],datasets:[{label:'卓平均MAKAスコア',data:rankAvgM,backgroundColor:['rgba(255,215,0,.7)','rgba(0,212,255,.6)','rgba(100,100,120,.6)','rgba(255,68,68,.7)'],borderColor:['#ffd700','#00d4ff','#6e6e8e','#ff4444'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:5,grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{display:false}}}});
+
+  const maxByRankM={1:[],2:[],3:[],4:[]};
+  G.forEach(g=>{if(g.m1)maxByRankM[g.rank].push(Math.max(makaScore(g.m1),makaScore(g.m2),makaScore(g.m3),makaScore(g.m4)));});
+  const maxAvgM=[1,2,3,4].map(r=>{const a=maxByRankM[r];return a.length?+(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):0;});
+  new Chart(document.getElementById('cMakaTop'),{type:'bar',data:{labels:['1位🥇','2位🥈','3位🥉','4位💢'],datasets:[{label:'卓最高MAKAスコア平均',data:maxAvgM,backgroundColor:['rgba(255,215,0,.7)','rgba(0,212,255,.6)','rgba(100,100,120,.6)','rgba(255,68,68,.7)'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:6,grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{display:false}}}});
+
+  const selfScores=G.filter(g=>g.m1).map(g=>makaScore(g.maka));
+  const tableScores=G.filter(g=>g.m1).map(tableAvgScore);
+  const scColors=G.filter(g=>g.m1).map(g=>g.rank===1?'rgba(255,215,0,.8)':g.rank===2?'rgba(0,212,255,.7)':g.rank===3?'rgba(100,100,120,.7)':'rgba(255,68,68,.8)');
+  new Chart(document.getElementById('cMakaSelf'),{type:'scatter',data:{datasets:[{label:'各対局',data:G.filter(g=>g.m1).map((g,i)=>{return{x:selfScores[i],y:tableScores[i],rank:g.rank}}),backgroundColor:scColors,pointRadius:6,pointHoverRadius:9}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:'自分MAKAスコア',color:'var(--dim)'},min:0,max:6,grid:{color:'rgba(30,58,95,.5)'}},y:{title:{display:true,text:'卓平均MAKAスコア',color:'var(--dim)'},min:0,max:5,grid:{color:'rgba(30,58,95,.5)'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`自分:${ctx.parsed.x} / 卓avg:${ctx.parsed.y.toFixed(2)} / ${['','1位','2位','3位','4位'][ctx.raw.rank]}`}}}}});
+
+  const tzData={};TZ_ORDER.forEach(z=>tzData[z]=[]);
+  G.forEach(g=>{const z=timeZone(g.time);if(tzData[z])tzData[z].push(g);});
+  const tzAvgRanks=TZ_ORDER.map(z=>{const gs=tzData[z];return gs.length?+(gs.reduce((a,g)=>a+g.rank,0)/gs.length).toFixed(2):0;});
+  const tzTopRates=TZ_ORDER.map(z=>{const gs=tzData[z];return gs.length?+(gs.filter(g=>g.rank===1).length/gs.length*100).toFixed(1):0;});
+  const tzLasRates=TZ_ORDER.map(z=>{const gs=tzData[z];return gs.length?+(gs.filter(g=>g.rank===4).length/gs.length*100).toFixed(1):0;});
+  new Chart(document.getElementById('cTZ'),{type:'bar',data:{labels:TZ_ORDER.map(z=>z.split('(')[0]),datasets:[{label:'平均順位',data:tzAvgRanks,backgroundColor:TZ_COLORS,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{reverse:true,min:1,max:4,ticks:{stepSize:0.5},grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`平均順位: ${ctx.raw}`}}}}});
+  new Chart(document.getElementById('cTZRate'),{type:'bar',data:{labels:TZ_ORDER.map(z=>z.split('(')[0]),datasets:[{label:'トップ率%',data:tzTopRates,backgroundColor:'rgba(255,215,0,.7)',borderColor:'#ffd700',borderWidth:1},{label:'ラス率%',data:tzLasRates,backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:50,ticks:{callback:v=>v+'%'},grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
+
+  const daily=buildDailyGroups();
+  const nthData={};
+  Object.values(daily).filter(gs=>gs.length>=2).forEach(gs=>{const sorted=gs.sort((a,b)=>a.time.localeCompare(b.time));sorted.forEach((g,i)=>{if(!nthData[i+1])nthData[i+1]=[];nthData[i+1].push(g.rank);});});
+  const nthKeys=Object.keys(nthData).map(Number).sort((a,b)=>a-b);
+  const nthAvgs=nthKeys.map(k=>+(nthData[k].reduce((a,b)=>a+b,0)/nthData[k].length).toFixed(2));
+  new Chart(document.getElementById('cNth'),{type:'line',data:{labels:nthKeys.map(k=>k+'戦目'),datasets:[{label:'平均順位',data:nthAvgs,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.1)',borderWidth:2,pointBackgroundColor:nthAvgs.map(v=>v<=2?'#7fff7f':v<=2.5?'#ffd700':'#ff4444'),pointRadius:7,tension:.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{reverse:true,min:1,max:3.5,ticks:{stepSize:.5,callback:v=>v+'位'},grid:{color:'rgba(30,58,95,.5)'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`平均順位: ${ctx.raw}`}}}}});
+}
+
+renderKPI();renderLog();renderHaifuya();renderAnalysis();renderMakaAnalysis();renderFooter();renderCharts();
+</script>
+</body>
+</html>
