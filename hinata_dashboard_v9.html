@@ -192,7 +192,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
       <div class="sr"><span class="sl">満貫超え放銃</span><span class="sv g">0回 ◎</span></div>
       <div class="sr"><span class="sl">親被り率</span><span class="sv w" id="a-kb">---</span></div>
       <div class="sr"><span class="sl">親被り平均打点</span><span class="sv w" id="a-kba">---</span></div>
-      <div class="ins g"><strong>結論：</strong>打牌品質は雀聖圏。段位乖離は<strong>避けようのない親被り集中</strong>が主因。収束すれば自然上昇。</div>
+      <div class="ins g" id="ins-skill-vs-luck"></div>
     </div>
     <div class="ac">
       <h3>🎯 立直/ダマ/副露 評価</h3>
@@ -202,12 +202,12 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
       <div class="sr"><span class="sl">副露後放銃率</span><span class="sv g" id="a-fh">---</span></div>
       <div class="sr"><span class="sl">ダマ率</span><span class="sv a" id="a-dm">---</span></div>
       <div class="sr"><span class="sl">立直良形率</span><span class="sv g" id="a-ry">---</span></div>
-      <div class="ins">ダマ率の高さは打点価値の見極めができている証拠。副露後放銃率の低さは<strong>鳴き判断精度の高さ</strong>を示す。</div>
+      <div class="ins" id="ins-riichi-eval"></div>
     </div>
     <div class="ac">
       <h3>🔢 スキルプロファイル</h3>
       <div id="skbars"></div>
-      <div class="ins">放銃回避・鳴き・押し引きは<strong>雀聖水準</strong>。課題はダマ系への対処と朝帯安定。</div>
+      <div class="ins" id="ins-skill-summary"></div>
     </div>
   </div>
 
@@ -216,12 +216,12 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
     <div class="ac" style="grid-column:span 2">
       <h3>📊 時間帯 × 順位分布</h3>
       <div id="tz-detail"></div>
-      <div class="ins w"><strong>朝(6-12時)</strong>がラス率最高・かつ相手平均MAKAスコア最強。<strong>夜(18-24時)</strong>はラス率<strong>0%</strong>・平均順位2.19と最安定。</div>
+      <div class="ins w" id="ins-tz-summary"></div>
     </div>
     <div class="ac">
       <h3>🏯 時間帯別 卓強度（相手平均MAKA）</h3>
       <div id="tz-strength"></div>
-      <div class="ins gold"><strong>朝が最強卓帯</strong>。自分のパフォーマンス低下との二重苦。夜帯が最も稼げる時間。</div>
+      <div class="ins gold" id="ins-tz-strength"></div>
     </div>
     <div class="ac">
       <h3>📈 時間帯別 平均順位チャート</h3>
@@ -238,7 +238,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
     <div class="ac">
       <h3>📊 同日何戦目か × 平均順位</h3>
       <div id="nth-bars" style="margin-top:8px"></div>
-      <div class="ins g"><strong>疲れるほど強くなる！</strong> 温まり効果継続確認。連戦後半が黄金タイム。</div>
+      <div class="ins g" id="ins-warmup"></div>
     </div>
     <div class="ac">
       <h3>📈 何戦目か × 平均順位チャート</h3>
@@ -255,7 +255,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
     <div class="ac">
       <h3>📊 期待値からの偏差</h3>
       <div id="rank-deviation"></div>
-      <div class="ins"><strong>ラス回避特化型</strong>プロファイル継続。PT計算上3位は±0圏のため<strong>1位獲得が収支の鍵</strong>。</div>
+      <div class="ins" id="ins-rank-structure"></div>
     </div>
     <div class="ac">
       <h3>🔍 2位の内訳</h3>
@@ -280,7 +280,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
   <div class="st">🧑 ひなた自身のMAKA分析</div>
   <div class="agrid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
     <div class="ac"><h3>📊 ひなたMAKA分布</h3><div class="cw" style="height:200px"><canvas id="cSelfMakaDist"></canvas></div></div>
-    <div class="ac"><h3>🎯 順位別 ひなた自身のMAKA平均</h3><div id="maka-self-rank-bars" style="margin-top:8px"></div><div class="ins a">自分のMAKAが高くても順位が取れない＝<strong>相手が強いから負けている</strong>証拠。</div></div>
+    <div class="ac"><h3>🎯 順位別 ひなた自身のMAKA平均</h3><div id="maka-self-rank-bars" style="margin-top:8px"></div><div class="ins a" id="ins-maka-self"></div></div>
     <div class="ac"><h3>📈 自分のMAKAと順位の関係</h3><div id="maka-self-table"></div></div>
   </div>
   <div class="st">🏯 卓強度分析</div>
@@ -288,7 +288,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
     <div class="ac" style="grid-column:span 2">
       <h3>📊 ひなた順位別 卓平均MAKAスコア</h3>
       <div id="maka-rank-bars" style="margin-top:8px"></div>
-      <div class="ins gold"><strong>MAKAスコア換算：</strong>S+=6/S=5/S-=4/A+=3.5/A=3/A-=2.5/B+=2/B=1.5/B-=1/C以下=0.5<br><strong>結論：</strong>強い卓ほど負ける構造が継続確認。</div>
+      <div class="ins gold" id="ins-maka-table"></div>
     </div>
     <div class="ac"><h3>🏆 1位時の卓構成</h3><div id="maka-top-detail"></div></div>
   </div>
@@ -315,7 +315,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
       <div class="tli"><div class="tld g"></div><div class="tlc"><strong>新局追加：</strong>牌譜画像をClaudeに送る → Claudeが hinata_data.js を更新して返す → 差し替えるだけ</div></div>
       <div class="tli"><div class="tld a"></div><div class="tlc"><strong>Claudeへの引き継ぎ：</strong>hinata_data.js だけ渡せばOK。HTMLは不要。</div></div>
       <div class="tli"><div class="tld a"></div><div class="tlc"><strong>PT計算式：</strong>100の位切り上げ→(切り上げ-25000)÷1000+ウマ(1位+15/2位+5/3位-5/4位-15)+段位点(1位+55/2位+30/3位0/4位-80)</div></div>
-      <div class="tli"><div class="tld gold"></div><div class="tlc"><strong>v9変更点：</strong>データ外部ファイル化（hinata_data.js）。HTML永久保存版。</div></div>
+      <div class="tli"><div class="tld gold"></div><div class="tlc"><strong>v9変更点：</strong>データ外部ファイル化（hinata_data.js）。HTML永久保存版。skill_bars/insight_texts/dist系もjs管理に移行。</div></div>
     </div>
     <div class="ac">
       <h3>🎮 プレイヤープロフィール</h3>
@@ -327,12 +327,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--border);displ
     </div>
     <div class="ac">
       <h3>🧠 分析コンテキスト</h3>
-      <div class="tli"><div class="tld a"></div><div class="tlc">ダマ率の高さは<strong>打点価値見極め</strong>の証拠</div></div>
-      <div class="tli"><div class="tld a"></div><div class="tlc">副露後放銃率低さ＝<strong>鳴き判断精度高い</strong></div></div>
-      <div class="tli"><div class="tld w"></div><div class="tlc"><strong>朝帯は相手が強い</strong>＋自分のパフォーマンス低下の二重苦</div></div>
-      <div class="tli"><div class="tld gold"></div><div class="tlc"><strong>連戦後半が強い</strong>（温まり効果）</div></div>
-      <div class="tli"><div class="tld g"></div><div class="tlc"><strong>夜帯(18-24時)が最安定</strong>。ラス率0%継続</div></div>
-      <div class="tli"><div class="tld w"></div><div class="tlc"><strong>放銃時門前率54.55%</strong>がやや高め=ダマ系への対処が次の課題</div></div>
+      <div id="hnd-context"></div>
     </div>
   </div>
 </div>
@@ -350,7 +345,14 @@ function getData(){ return typeof HINATA_DATA !== 'undefined' ? HINATA_DATA : nu
 
 const D=getData();
 if(!D){document.body.innerHTML='<div style="color:#ff4444;padding:40px;font-family:monospace"><h2>⚠ データ読み込みエラー</h2><p style="margin-top:12px">hinata_data.js が見つかりません。<br>このHTMLと同じフォルダに置いてください。</p></div>';throw 0;}
-const G=D.games,H=D.haifuya;
+
+// コメントアウト行を除いたgamesのみ使用
+const G=D.games.filter(g=>g && g.id),H=D.haifuya;
+const IT=D.insight_texts||{};
+const SK=D.skill_bars||[];
+const HD=D.houra_dist||{riichi:38.30,furo:47.87,dama:13.83};
+const HSD=D.housha_dist||{menmae:54.90,furo:31.37,riichi:13.73};
+const HAD=D.housha_aite_dist||{riichi:36.54,furo:51.92,dama:11.54};
 
 function makaScore(m){const t={'S+':6,'S':5,'S-':4,'A+':3.5,'A':3,'A-':2.5,'B+':2,'B':1.5,'B-':1,'C+':0.7,'C':0.5,'C-':0.3,'D+':0.3,'D':0.2};return t[String(m||'').trim()]||1;}
 function makaColor(m){const s=String(m||'');if(s.includes('S'))return'var(--accent4)';if(s.includes('A'))return'var(--accent)';if(s.includes('B'))return'var(--dim)';return'var(--warn)';}
@@ -384,6 +386,12 @@ const TZ_COLORS=['rgba(255,215,0,.7)','rgba(0,212,255,.6)','rgba(127,255,127,.7)
 function buildDailyGroups(){const daily={};G.forEach(g=>{if(!daily[g.date])daily[g.date]=[];daily[g.date].push(g);});return daily;}
 function tableAvgScore(g){return(makaScore(g.m1)+makaScore(g.m2)+makaScore(g.m3)+makaScore(g.m4))/4;}
 function tableMaxScore(g){return Math.max(makaScore(g.m1),makaScore(g.m2),makaScore(g.m3),makaScore(g.m4));}
+
+// insight_texts をDOMに注入するヘルパー
+function setIns(id,key,fallback){
+  const el=document.getElementById(id);
+  if(el)el.innerHTML=IT[key]||fallback||'';
+}
 
 function renderKPI(){
   document.getElementById('sv').textContent=H.stable_rank;
@@ -432,8 +440,20 @@ function renderAnalysis(){
   document.getElementById('a-fh').textContent=pct(H.furo_housha_rate)+' ◎';
   document.getElementById('a-dm').textContent=pct(H.dama_rate);
   document.getElementById('a-ry').textContent=pct(H.riichi_ryokei);
-  const skills=[{n:'放銃回避',s:86},{n:'鳴き判断',s:85},{n:'押し引き',s:82},{n:'ラス回避',s:87},{n:'トップ取り',s:65},{n:'理不尽耐性',s:55},{n:'ダマ系対処',s:35}];
-  document.getElementById('skbars').innerHTML=skills.map(s=>`<div class="skr"><span class="skn">${s.n}</span><div class="skt"><div class="skf" style="width:${s.s}%"></div></div><span class="skp">${s.s}</span></div>`).join('');
+
+  // insight_texts から動的注入
+  setIns('ins-skill-vs-luck','skill_vs_luck','<strong>結論：</strong>打牌品質は雀聖圏。段位乖離は避けようのない親被り集中が主因。');
+  setIns('ins-riichi-eval','riichi_eval','ダマ率の高さは打点価値の見極めができている証拠。副露後放銃率の低さは<strong>鳴き判断精度の高さ</strong>を示す。');
+  setIns('ins-skill-summary','skill_summary','放銃回避・鳴き・押し引きは<strong>雀聖水準</strong>。課題はダマ系への対処と朝帯安定。');
+  setIns('ins-tz-summary','tz_summary','<strong>朝</strong>がラス率最高。<strong>夜</strong>はラス率0%・最安定。');
+  setIns('ins-tz-strength','tz_strength','<strong>朝が最強卓帯</strong>。夜帯が最も稼げる時間。');
+  setIns('ins-warmup','warmup','<strong>疲れるほど強くなる！</strong> 温まり効果継続確認。');
+  setIns('ins-rank-structure','rank_structure','<strong>ラス回避特化型</strong>プロファイル継続。');
+
+  // スキルバー：jsのskill_barsから描画
+  document.getElementById('skbars').innerHTML=SK.map(s=>`<div class="skr"><span class="skn">${s.name}</span><div class="skt"><div class="skf" style="width:${s.score}%"></div></div><span class="skp">${s.score}</span></div>`).join('');
+
+  // analyst_notes
   document.getElementById('anotes').innerHTML=D.analyst_notes.map(n=>`<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="font-family:monospace;font-size:10px;color:var(--dim);margin-bottom:3px">${n.date} / ${n.author}</div><div style="font-size:11px;color:var(--text);line-height:1.7">${n.note}</div></div>`).join('');
 
   const tzData={};TZ_ORDER.forEach(z=>tzData[z]=[]);
@@ -446,7 +466,7 @@ function renderAnalysis(){
     const lsR=(gs.filter(g=>g.rank===4).length/n*100).toFixed(0);
     const col=TZ_COLORS[i];
     const badge=lsR==0?'<span style="color:var(--accent3);font-size:10px">ラス0% ◎</span>':(+lsR>=20?'<span style="color:var(--warn);font-size:10px">⚠注意</span>':'');
-    return`<div class="tz-row"><span class="tz-label" style="color:${col.replace(',.7)',')')};"> ${z}</span><div class="tz-bars"><div class="tz-bar-row"><span class="tz-bar-label">トップ率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${tpR}%;background:${col}"></div></div><span class="tz-stat" style="color:var(--accent4)">${tpR}%</span></div><div class="tz-bar-row"><span class="tz-bar-label">ラス率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${lsR}%;background:rgba(255,68,68,.7)"></div></div><span class="tz-stat" style="color:${+lsR>=20?'var(--warn)':+lsR==0?'var(--accent3)':'var(--text)'}">${lsR}% ${badge}</span></div></div><span style="font-family:monospace;font-size:11px;color:var(--dim);width:55px;text-align:right">${n}局 / 平均${avg}</span></div>`;
+    return`<div class="tz-row"><span class="tz-label" style="color:${col.replace(',.7)',')')};color:${col.replace(',.6)',')')}"> ${z}</span><div class="tz-bars"><div class="tz-bar-row"><span class="tz-bar-label">トップ率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${tpR}%;background:${col}"></div></div><span class="tz-stat" style="color:var(--accent4)">${tpR}%</span></div><div class="tz-bar-row"><span class="tz-bar-label">ラス率</span><div class="tz-bar-track"><div class="tz-bar-fill" style="width:${lsR}%;background:rgba(255,68,68,.7)"></div></div><span class="tz-stat" style="color:${+lsR>=20?'var(--warn)':+lsR==0?'var(--accent3)':'var(--text)'}">${lsR}% ${badge}</span></div></div><span style="font-family:monospace;font-size:11px;color:var(--dim);width:55px;text-align:right">${n}局 / 平均${avg}</span></div>`;
   }).join('');
 
   const tzStrData={};TZ_ORDER.forEach(z=>tzStrData[z]={oppScores:[],tableScores:[]});
@@ -508,6 +528,18 @@ function renderAnalysis(){
   document.getElementById('close-games').innerHTML=
     `<div style="font-size:10px;color:var(--accent);font-family:monospace;margin-bottom:8px">😱 薄氷トップ</div>`+topClose.map(g=>`<div class="sr"><span class="sl">#${g.id} ${g.date.slice(5)}</span><span class="sv gold">2位に${cm(g.s1-g.s2)}点差</span></div>`).join('')+
     `<div style="font-size:10px;color:var(--accent);font-family:monospace;margin:10px 0 8px">🔥 惜しい2位</div>`+close2nd.map(g=>`<div class="sr"><span class="sl">#${g.id} ${g.date.slice(5)}</span><span class="sv w">あと${cm(g.s1-g.score)}点</span></div>`).join('');
+
+  // 引き継ぎタブ：コンテキスト部分をinsight_textsから
+  const hndCtxItems=[
+    {dot:'a',text:'ダマ率の高さは<strong>打点価値見極め</strong>の証拠'},
+    {dot:'a',text:'副露後放銃率低さ＝<strong>鳴き判断精度高い</strong>'},
+    {dot:'w',text:`<strong>朝帯は相手が強い</strong>＋自分のパフォーマンス低下の二重苦`},
+    {dot:'gold',text:'<strong>連戦後半が強い</strong>（温まり効果）'},
+    {dot:'g',text:'<strong>夜帯(18-24時)が最安定</strong>。ラス率0%継続'},
+    {dot:'w',text:`放銃時門前率<strong>${H.housha_menmae_rate}%</strong>がやや高め＝ダマ系への対処が次の課題`},
+  ];
+  const hndEl=document.getElementById('hnd-context');
+  if(hndEl)hndEl.innerHTML=hndCtxItems.map(i=>`<div class="tli"><div class="tld ${i.dot}"></div><div class="tlc">${i.text}</div></div>`).join('');
 }
 
 function renderMakaAnalysis(){
@@ -538,6 +570,9 @@ function renderMakaAnalysis(){
     const n=selfByRankScore[r].length,avg=selfRankAvg[r],p=Math.round(avg/selfMaxBar*100);
     return`<div class="maka-rank-bar"><span class="maka-rank-label" style="color:${rankColors2[i]}">${rankLabels2[i]}</span><div class="maka-rank-track"><div class="maka-rank-fill" style="width:${p}%;background:${rankColors2[i]}">${avg}</div></div><span style="font-family:monospace;font-size:10px;color:var(--dim);width:40px;text-align:right">${n}局</span></div>`;
   }).join('');
+
+  setIns('ins-maka-self','maka_self','自分のMAKAが高くても順位が取れない＝<strong>相手が強いから負けている</strong>証拠。');
+  setIns('ins-maka-table','maka_table','<strong>強い卓ほど負ける構造</strong>が継続確認。');
 
   const maxBar=Math.max(...Object.values(rankAvg));
   const rankColors=['#ffd700','#00d4ff','#9e9e9e','#ff4444'];
@@ -580,8 +615,19 @@ function renderCharts(){
   new Chart(document.getElementById('cMaka'),{type:'doughnut',data:{labels:['S系','A系','B系以下'],datasets:[{data:[makaS,makaA,makaB],backgroundColor:['rgba(255,215,0,.8)','rgba(0,212,255,.75)','rgba(158,158,158,.6)'],borderColor:['#ffd700','#00d4ff','#9e9e9e'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:12,boxWidth:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}回 (${(ctx.raw/total*100).toFixed(1)}%)`}}}}});
   new Chart(document.getElementById('cRank'),{type:'doughnut',data:{labels:['1位🥇','2位🥈','3位🥉','4位💢'],datasets:[{data:[1,2,3,4].map(r=>G.filter(g=>g.rank===r).length),backgroundColor:['rgba(255,215,0,.8)','rgba(0,212,255,.7)','rgba(100,100,120,.7)','rgba(255,68,68,.8)'],borderColor:['#ffd700','#00d4ff','#6e6e8e','#ff4444'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:12,boxWidth:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}回 (${(ctx.raw/total*100).toFixed(1)}%)`}}}}});
   new Chart(document.getElementById('cPer'),{type:'bar',data:{labels:[`前半#1-15\n(${p1.n}局)`,`中盤#16-31\n(${p2.n}局)`,`直近#32-\n(${p3.n}局)`],datasets:[{label:'トップ率%',data:[p1.top,p2.top,p3.top],backgroundColor:'rgba(255,215,0,.7)',borderColor:'#ffd700',borderWidth:1},{label:'ラス率%',data:[p1.las,p2.las,p3.las],backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1},{label:'平均順位×10',data:[p1.avg*10,p2.avg*10,p3.avg*10],backgroundColor:'rgba(0,212,255,.5)',borderColor:'#00d4ff',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},beginAtZero:true},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
-  new Chart(document.getElementById('cRdr'),{type:'radar',data:{labels:['放銃回避','和了率','ラス回避','副露効率','先制率','立直収支','トップ率'],datasets:[{label:'ひなた',data:[86,72,87,80,83,78,65],backgroundColor:'rgba(0,212,255,.12)',borderColor:'#00d4ff',borderWidth:2,pointBackgroundColor:'#00d4ff',pointRadius:4},{label:'豪1平均(推定)',data:[70,68,75,65,68,60,65],backgroundColor:'rgba(255,107,53,.07)',borderColor:'rgba(255,107,53,.5)',borderWidth:1.5,borderDash:[4,4],pointBackgroundColor:'rgba(255,107,53,.5)',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{stepSize:20,backdropColor:'transparent',color:'#3a5a7a'},grid:{color:'rgba(30,58,95,.5)'},pointLabels:{color:'#8ab0cc',font:{size:10}},angleLines:{color:'rgba(30,58,95,.5)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12}}}}});
-  new Chart(document.getElementById('cAg'),{type:'bar',data:{labels:['立直','副露','ダマ/門前'],datasets:[{label:'和了時',data:[37.50,50.00,12.50],backgroundColor:'rgba(0,212,255,.7)',borderColor:'#00d4ff',borderWidth:1},{label:'放銃時',data:[15.15,30.30,54.55],backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1},{label:'放銃相手',data:[39.39,45.45,15.15],backgroundColor:'rgba(255,215,0,.5)',borderColor:'#ffd700',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},ticks:{callback:v=>v+'%'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
+
+  // レーダーチャート：skill_barsから動的生成
+  const radarLabels=SK.map(s=>s.name);
+  const radarData=SK.map(s=>s.score);
+  const radarBase=SK.map(()=>65); // 豪1平均推定ベースライン
+  new Chart(document.getElementById('cRdr'),{type:'radar',data:{labels:radarLabels,datasets:[{label:'ひなた',data:radarData,backgroundColor:'rgba(0,212,255,.12)',borderColor:'#00d4ff',borderWidth:2,pointBackgroundColor:'#00d4ff',pointRadius:4},{label:'豪1平均(推定)',data:radarBase,backgroundColor:'rgba(255,107,53,.07)',borderColor:'rgba(255,107,53,.5)',borderWidth:1.5,borderDash:[4,4],pointBackgroundColor:'rgba(255,107,53,.5)',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{stepSize:20,backdropColor:'transparent',color:'#3a5a7a'},grid:{color:'rgba(30,58,95,.5)'},pointLabels:{color:'#8ab0cc',font:{size:10}},angleLines:{color:'rgba(30,58,95,.5)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12}}}}});
+
+  // 和了/放銃グラフ：jsのdistから動的生成
+  new Chart(document.getElementById('cAg'),{type:'bar',data:{labels:['立直','副露','ダマ/門前'],datasets:[
+    {label:'和了時',data:[HD.riichi,HD.furo,HD.dama],backgroundColor:'rgba(0,212,255,.7)',borderColor:'#00d4ff',borderWidth:1},
+    {label:'放銃時',data:[HSD.riichi,HSD.furo,HSD.menmae],backgroundColor:'rgba(255,68,68,.6)',borderColor:'#ff4444',borderWidth:1},
+    {label:'放銃相手',data:[HAD.riichi,HAD.furo,HAD.dama],backgroundColor:'rgba(255,215,0,.5)',borderColor:'#ffd700',borderWidth:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(30,58,95,.5)'},ticks:{callback:v=>v+'%'}},x:{grid:{color:'rgba(30,58,95,.3)'}}},plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10}}}}});
 
   const selfMakaLabels=['S+','S','S-','A+','A','A-','B+','B','B-','C以下'];
   const selfMakaCounts=selfMakaLabels.map(lbl=>G.filter(g=>{const m=String(g.maka||'').trim();if(lbl==='C以下')return m.startsWith('C')||m.startsWith('D');return m===lbl;}).length);
